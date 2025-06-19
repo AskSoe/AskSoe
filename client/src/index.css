@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-outfit: 'Outfit', sans-serif;
+    
+    /* Main colors - Navy blue background, white text */
+    --background: 210 100% 8%; /* Navy blue #00254d */
+    --foreground: 0 0% 100%; /* White text */
+    
+    /* Card and surface colors */
+    --card: 210 100% 12%; /* Slightly lighter navy for cards */
+    --card-foreground: 0 0% 100%; /* White text on cards */
+    
+    /* Popover colors */
+    --popover: 210 100% 12%; /* Slightly lighter navy */
+    --popover-foreground: 0 0% 100%; /* White text */
+    
+    /* Primary colors - Apple blue accent */
+    --primary: 212 100% 50%; /* Apple blue #007aff */
+    --primary-foreground: 0 0% 100%; /* White text on blue */
+    
+    /* Secondary colors */
+    --secondary: 210 100% 15%; /* Darker navy for secondary elements */
+    --secondary-foreground: 0 0% 90%; /* Light gray text */
+    
+    /* Muted colors */
+    --muted: 210 100% 15%; /* Darker navy for muted areas */
+    --muted-foreground: 0 0% 70%; /* Muted gray text */
+    
+    /* Accent colors */
+    --accent: 210 100% 15%; /* Darker navy accent */
+    --accent-foreground: 0 0% 100%; /* White text */
+    
+    /* Destructive colors */
+    --destructive: 0 84% 60%; /* Red for destructive actions */
+    --destructive-foreground: 0 0% 100%; /* White text */
+    
+    /* Border and input colors */
+    --border: 210 100% 20%; /* Lighter navy for borders */
+    --input: 210 100% 15%; /* Darker navy for inputs */
+    --ring: 212 100% 50%; /* Apple blue for focus rings */
+    
+    /* Chart colors */
+    --chart-1: 212 100% 50%; /* Apple blue */
+    --chart-2: 262 83% 58%; /* Purple variant */
+    --chart-3: 173 58% 39%; /* Teal variant */
+    --chart-4: 43 74% 66%; /* Yellow variant */
+    --chart-5: 27 87% 67%; /* Orange variant */
+  }
+  
+  * {
+    @apply border-border;
+  }
+
+  body {
+    font-family: var(--font-outfit);
+    @apply bg-background text-foreground antialiased;
+  }
+  
+  /* Outfit font utility classes for different weights */
+  .outfit-thin {
+    font-family: var(--font-outfit);
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  .outfit-regular {
+    font-family: var(--font-outfit);
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .outfit-medium {
+    font-family: var(--font-outfit);
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .outfit-semibold {
+    font-family: var(--font-outfit);
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  .outfit-bold {
+    font-family: var(--font-outfit);
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  /* Post-login app styling */
+  .app-container {
+    @apply bg-background text-foreground min-h-screen;
+  }
+
+  /* Modern button styling with glow effects */
+  .btn-modern {
+    @apply px-4 py-2 rounded-[10px] font-medium transition-all duration-300 shadow-sm hover:shadow-lg;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-2 hover:ring-primary/50 hover:shadow-primary/25;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:ring-2 hover:ring-secondary/50;
+  }
+
+  /* Card styling for post-login */
+  .card-modern {
+    @apply bg-card text-card-foreground rounded-[10px] border border-border shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  /* Input styling for dark theme */
+  .input-modern {
+    @apply bg-input text-foreground border border-border rounded-[10px] px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200;
+  }
+
+  /* Header/navigation styling */
+  .nav-modern {
+    @apply backdrop-blur-sm border-b border-border/20;
+  }
+
+  /* Responsive navigation */
+  @media (max-width: 768px) {
+    .nav-links {
+      @apply hidden;
+    }
+    
+    .mobile-nav-button {
+      @apply block;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .nav-links {
+      @apply flex;
+    }
+    
+    .mobile-nav-button {
+      @apply hidden;
+    }
+  }
+
+  /* Centered dashboard content */
+  .dashboard-content {
+    @apply max-w-6xl mx-auto px-4 py-6;
+  }
+
+  /* Hover glow effects */
+  .hover-glow {
+    @apply transition-all duration-300 hover:ring-2 hover:ring-primary/30 hover:shadow-lg hover:shadow-primary/10;
+  }
+}

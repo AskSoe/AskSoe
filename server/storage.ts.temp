@@ -1,0 +1,603 @@
+import { 
+  users, type User, type InsertUser,
+  systems, type System, type InsertSystem,
+  llmProviders, type LlmProvider, type InsertLlmProvider,
+  conversations, type Conversation, type InsertConversation,
+  messages, type Message, type InsertMessage,
+  oauthTokens, type OauthToken, type InsertOauthToken,
+  documents, type Document, type InsertDocument,
+  AccessLevel, type AccessLevelType,
+  SubscriptionTier, type SubscriptionTierType,
+  tierLimits
+import bcrypt from "bcryptjs";
+
+export interface IStorage {
+  // User methods
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUserAccessLevel(id: number, accessLevel: AccessLevelType): Promise<User | undefined>;
+  updateUserSubscription(id: number, tier: SubscriptionTierType): Promise<User | undefined>;
+  loginUser(username: string, password: string): Promise<User | undefined>;
+  incrementUserSystemCount(id: number): Promise<User | undefined>;
+  decrementUserSystemCount(id: number): Promise<User | undefined>;
+  
+  // System methods
+  getSystems(): Promise<System[]>;
+  getUserSystems(userId: number): Promise<System[]>;
+  getSystem(id: number): Promise<System | undefined>;
+  createSystem(system: InsertSystem, userId?: number): Promise<System>;
+  updateSystem(id: number, system: Partial<System>): Promise<System | undefined>;
+  deleteSystem(id: number): Promise<boolean>;
+  
+  // OAuth token methods
+  getOAuthToken(userId: number, provider: string): Promise<OauthToken | undefined>;
+  createOAuthToken(token: InsertOauthToken): Promise<OauthToken>;
+  updateOAuthToken(id: number, token: Partial<OauthToken>): Promise<OauthToken | undefined>;
+  deleteOAuthToken(id: number): Promise<boolean>;
+  
+  // LLM Provider methods
+  getLlmProviders(): Promise<LlmProvider[]>;
+  getLlmProvider(id: number): Promise<LlmProvider | undefined>;
+  getActiveLlmProvider(): Promise<LlmProvider | undefined>;
+  createLlmProvider(provider: InsertLlmProvider): Promise<LlmProvider>;
+  updateLlmProvider(id: number, provider: Partial<LlmProvider>): Promise<LlmProvider | undefined>;
+  setActiveLlmProvider(id: number): Promise<LlmProvider | undefined>;
+  
+  // Conversation methods
+  getConversations(): Promise<Conversation[]>;
+  getUserConversations(userId: number): Promise<Conversation[]>;
+  getConversation(id: number): Promise<Conversation | undefined>;
+  createConversation(conversation: InsertConversation): Promise<Conversation>;
+  updateConversation(id: number, conversation: Partial<Conversation>): Promise<Conversation | undefined>;
+  deleteConversation(id: number): Promise<boolean>;
+  
+  // Message methods
+  getMessages(conversationId: number): Promise<Message[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
+  updateMessage(id: number, updates: Partial<Message>): Promise<Message | undefined>;
+  
+  // Document methods
+  getDocuments(userId?: number): Promise<Document[]>;
+  getConversationDocuments(conversationId: number): Promise<Document[]>;
+  getDocument(id: number): Promise<Document | undefined>;
+  createDocument(document: InsertDocument): Promise<Document>;
+  updateDocument(id: number, updates: Partial<Document>): Promise<Document | undefined>;
+  deleteDocument(id: number): Promise<boolean>;
+  updateDocumentStatus(id: number, status: string): Promise<Document | undefined>;
+  updateDocumentContent(id: number, content: string): Promise<Document | undefined>;
+  updateDocumentMetadata(id: number, metadata: any): Promise<Document | undefined>;
+}
+
+export class MemStorage implements IStorage {
+  private users: Map<number, User>;
+  private systems: Map<number, System>;
+  private llmProviders: Map<number, LlmProvider>;
+  private conversations: Map<number, Conversation>;
+  private messages: Map<number, Message>;
+  private oauthTokens: Map<number, OauthToken>;
+  
+  private userId: number;
+  private systemId: number;
+  private llmProviderId: number;
+  private conversationId: number;
+  private messageId: number;
+  private oauthTokenId: number;
+
+  constructor() {
+    this.users = new Map();
+    this.systems = new Map();
+    this.llmProviders = new Map();
+    this.conversations = new Map();
+    this.messages = new Map();
+    this.oauthTokens = new Map();
+    
+    this.userId = 1;
+    this.systemId = 1;
+    this.llmProviderId = 1;
+    this.conversationId = 1;
+    this.messageId = 1;
+    this.oauthTokenId = 1;
+    
+    // Add default systems - we'll handle this synchronously for simplicity
+    this.initializeDefaultDataSync();
+  }
+  
+  // Synchronous version of initialization for use in constructor
+  private initializeDefaultDataSync() {
+    // Create default users with different subscription tiers
+    this.createUser({
+      username: "free_user",
+      password: this.hashPassword("password123"),
+      accessLevel: AccessLevel.READ,
+      email: "free@example.com",
+      subscriptionTier: SubscriptionTier.FREE
+    });
+    
+    this.createUser({
+      username: "core_user",
+      password: this.hashPassword("password123"),
+      accessLevel: AccessLevel.READ,
+      email: "core@example.com",
+      subscriptionTier: SubscriptionTier.CORE
+    });
+    
+    this.createUser({
+      username: "pro_user",
+      password: this.hashPassword("password123"),
+      accessLevel: AccessLevel.WRITE,
+      email: "pro@example.com",
+      subscriptionTier: SubscriptionTier.PRO
+    });
+    
+    // Add some default systems
+    this.createSystem({
+      name: "Salesforce CRM",
+      type: "crm",
+      connectionDetails: {
+        apiUrl: "https://api.salesforce.com",
+        apiVersion: "v56.0"
+      },
+      status: "connected"
+    });
+    
+    this.createSystem({
+      name: "SAP ERP",
+      type: "erp",
+      connectionDetails: {
+        apiUrl: "https://api.sap.com",
+        apiVersion: "v2"
+      },
+      status: "connected"
+    });
+    
+    this.createSystem({
+      name: "Tableau",
+      type: "visualization",
+      connectionDetails: {
+        apiUrl: "https://api.tableau.com",
+        apiVersion: "v1"
+      },
+      status: "limited"
+    });
+    
+    // Add default LLM provider
+    this.createLlmProvider({
+      name: "Azure OpenAI (GPT-4)",
+      type: "azure",
+      apiKey: process.env.OPENAI_API_KEY || "",
+      settings: {
+        model: "gpt-4o",
+        temperature: 0.7
+      },
+      isActive: true
+    });
+    
+    // Add example LLM providers
+    this.createLlmProvider({
+      name: "Anthropic Claude",
+      type: "anthropic",
+      apiKey: null,
+      settings: {
+        model: "claude-3-opus",
+        temperature: 0.7
+      },
+      isActive: false
+    });
+    
+    this.createLlmProvider({
+      name: "OpenAI API",
+      type: "openai",
+      apiKey: null,
+      settings: {
+        model: "gpt-4o",
+        temperature: 0.7
+      },
+      isActive: false
+    });
+    
+    // Create a default conversation synchronously 
+    const id = this.conversationId++;
+    const now = new Date();
+    const conversation: Conversation = { 
+      title: "Customer Retention Analysis",
+      userId: 1,
+      id,
+      createdAt: now,
+    };
+    this.conversations.set(id, conversation);
+    
+    // Add example messages
+    const messageId = this.messageId++;
+    const messageNow = new Date();
+    const message: Message = { 
+      conversationId: conversation.id,
+      content: "Show me customer retention metrics for the last quarter compared to previous quarters.",
+      role: "user",
+      systemSources: [],
+      visualizations: [],
+      id: messageId,
+      timestamp: messageNow
+    };
+    this.messages.set(messageId, message);
+  }
+
+  // Helper function to hash passwords
+  private hashPassword(password: string): string {
+    return bcrypt.hashSync(password, 10);
+  }
+
+  // Helper function to verify passwords
+  private verifyPassword(password: string, hash: string): boolean {
+    return bcrypt.compareSync(password, hash);
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.username === username,
+    );
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.email === email,
+    );
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const id = this.userId++;
+    const now = new Date();
+    
+    // Set default values for new subscription fields
+    const user: User = { 
+      ...insertUser, 
+      id,
+      subscriptionTier: insertUser.subscriptionTier || SubscriptionTier.FREE,
+      systemsConnected: 0,
+      createdAt: now,
+      lastLoginAt: null
+    };
+    
+    this.users.set(id, user);
+    return user;
+  }
+  
+  async updateUserAccessLevel(id: number, accessLevel: AccessLevelType): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser: User = { ...user, accessLevel };
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  async updateUserSubscription(id: number, tier: SubscriptionTierType): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    // Update subscription tier and adjust access level if necessary
+    let accessLevel = user.accessLevel;
+    
+    // Pro tier gets write access, other tiers get read-only access
+    if (tier === SubscriptionTier.PRO) {
+      accessLevel = AccessLevel.WRITE;
+    } else if (user.accessLevel === AccessLevel.WRITE) {
+      // Downgrade from write to read if downgrading from PRO
+      accessLevel = AccessLevel.READ;
+    }
+    
+    const updatedUser: User = { 
+      ...user, 
+      subscriptionTier: tier,
+      accessLevel 
+    };
+    
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  async loginUser(username: string, password: string): Promise<User | undefined> {
+    const user = await this.getUserByUsername(username);
+    if (!user) return undefined;
+    
+    if (!this.verifyPassword(password, user.password)) {
+      return undefined;
+    }
+    
+    // Update last login time
+    const updatedUser: User = { 
+      ...user, 
+      lastLoginAt: new Date() 
+    };
+    
+    this.users.set(user.id, updatedUser);
+    return updatedUser;
+  }
+  
+  async incrementUserSystemCount(id: number): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    // Check if user has reached their system limit
+    const maxSystems = tierLimits[user.subscriptionTier].maxSystems;
+    if (user.systemsConnected >= maxSystems) {
+      throw new Error(`User has reached maximum system limit (${maxSystems}) for ${user.subscriptionTier} tier`);
+    }
+    
+    const updatedUser: User = { 
+      ...user, 
+      systemsConnected: user.systemsConnected + 1 
+    };
+    
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  async decrementUserSystemCount(id: number): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser: User = { 
+      ...user, 
+      systemsConnected: Math.max(0, user.systemsConnected - 1)
+    };
+    
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  // OAuth token methods
+  async getOAuthToken(userId: number, provider: string): Promise<OauthToken | undefined> {
+    return Array.from(this.oauthTokens.values()).find(
+      token => token.userId === userId && token.provider === provider
+    );
+  }
+  
+  async createOAuthToken(insertToken: InsertOauthToken): Promise<OauthToken> {
+    const id = this.oauthTokenId++;
+    const now = new Date();
+    const token: OauthToken = {
+      ...insertToken,
+      id,
+      createdAt: now,
+      updatedAt: now,
+      refreshToken: insertToken.refreshToken || null,
+      expiresAt: insertToken.expiresAt || null,
+      scopes: insertToken.scopes || [],
+      tokenData: insertToken.tokenData || {}
+    };
+    
+    this.oauthTokens.set(id, token);
+    return token;
+  }
+  
+  async updateOAuthToken(id: number, update: Partial<OauthToken>): Promise<OauthToken | undefined> {
+    const token = this.oauthTokens.get(id);
+    if (!token) return undefined;
+    
+    const now = new Date();
+    const updatedToken: OauthToken = { 
+      ...token, 
+      ...update,
+      updatedAt: now
+    };
+    
+    this.oauthTokens.set(id, updatedToken);
+    return updatedToken;
+  }
+  
+  async deleteOAuthToken(id: number): Promise<boolean> {
+    return this.oauthTokens.delete(id);
+  }
+  
+  // System methods
+  async getSystems(): Promise<System[]> {
+    return Array.from(this.systems.values());
+  }
+  
+  async getUserSystems(userId: number): Promise<System[]> {
+    // In a real implementation, this would filter systems by user ID
+    // For this demo, we'll return all systems
+    return Array.from(this.systems.values());
+  }
+  
+  async getSystem(id: number): Promise<System | undefined> {
+    return this.systems.get(id);
+  }
+  
+  async createSystem(insertSystem: InsertSystem, userId?: number): Promise<System> {
+    const id = this.systemId++;
+    const now = new Date();
+    const system: System = { 
+      ...insertSystem, 
+      id,
+      lastSynced: now,
+      status: insertSystem.status || "disconnected",
+      connectionDetails: insertSystem.connectionDetails || {}
+    };
+    
+    this.systems.set(id, system);
+    
+    // Increment the user's system count if a user ID is provided
+    if (userId) {
+      await this.incrementUserSystemCount(userId);
+    }
+    
+    return system;
+  }
+  
+  async updateSystem(id: number, update: Partial<System>): Promise<System | undefined> {
+    const system = this.systems.get(id);
+    if (!system) return undefined;
+    
+    const updatedSystem: System = { ...system, ...update };
+    this.systems.set(id, updatedSystem);
+    return updatedSystem;
+  }
+  
+  async deleteSystem(id: number): Promise<boolean> {
+    // In a real implementation, we would also decrement the user's system count
+    return this.systems.delete(id);
+  }
+  
+  // LLM Provider methods
+  async getLlmProviders(): Promise<LlmProvider[]> {
+    return Array.from(this.llmProviders.values());
+  }
+  
+  async getLlmProvider(id: number): Promise<LlmProvider | undefined> {
+    return this.llmProviders.get(id);
+  }
+  
+  async getActiveLlmProvider(): Promise<LlmProvider | undefined> {
+    return Array.from(this.llmProviders.values()).find(provider => provider.isActive);
+  }
+  
+  async createLlmProvider(insertProvider: InsertLlmProvider): Promise<LlmProvider> {
+    const id = this.llmProviderId++;
+    const provider: LlmProvider = { 
+      ...insertProvider, 
+      id,
+      apiKey: insertProvider.apiKey || null,
+      settings: insertProvider.settings || {},
+      isActive: insertProvider.isActive || false
+    };
+    
+    // If this is marked as active, deactivate all others
+    if (provider.isActive) {
+      Array.from(this.llmProviders.entries()).forEach(([existingId, existingProvider]) => {
+        if (existingProvider.isActive) {
+          this.llmProviders.set(existingId, { ...existingProvider, isActive: false });
+        }
+      });
+    }
+    
+    this.llmProviders.set(id, provider);
+    return provider;
+  }
+  
+  async updateLlmProvider(id: number, update: Partial<LlmProvider>): Promise<LlmProvider | undefined> {
+    const provider = this.llmProviders.get(id);
+    if (!provider) return undefined;
+    
+    const updatedProvider: LlmProvider = { ...provider, ...update };
+    
+    // If this is being set to active, deactivate all others
+    if (update.isActive) {
+      Array.from(this.llmProviders.entries()).forEach(([existingId, existingProvider]) => {
+        if (existingId !== id && existingProvider.isActive) {
+          this.llmProviders.set(existingId, { ...existingProvider, isActive: false });
+        }
+      });
+    }
+    
+    this.llmProviders.set(id, updatedProvider);
+    return updatedProvider;
+  }
+  
+  async setActiveLlmProvider(id: number): Promise<LlmProvider | undefined> {
+    const provider = this.llmProviders.get(id);
+    if (!provider) return undefined;
+    
+    // Deactivate all providers
+    Array.from(this.llmProviders.entries()).forEach(([existingId, existingProvider]) => {
+      if (existingProvider.isActive) {
+        this.llmProviders.set(existingId, { ...existingProvider, isActive: false });
+      }
+    });
+    
+    // Activate the requested provider
+    const updatedProvider: LlmProvider = { ...provider, isActive: true };
+    this.llmProviders.set(id, updatedProvider);
+    
+    return updatedProvider;
+  }
+  
+  // Conversation methods
+  async getConversations(): Promise<Conversation[]> {
+    return Array.from(this.conversations.values()).sort((a, b) => {
+      if (!a.createdAt || !b.createdAt) return 0;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
+  
+  async getUserConversations(userId: number): Promise<Conversation[]> {
+    return Array.from(this.conversations.values())
+      .filter(conversation => conversation.userId === userId)
+      .sort((a, b) => {
+        if (!a.createdAt || !b.createdAt) return 0;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+  }
+  
+  async getConversation(id: number): Promise<Conversation | undefined> {
+    return this.conversations.get(id);
+  }
+  
+  async createConversation(insertConversation: InsertConversation): Promise<Conversation> {
+    const id = this.conversationId++;
+    const now = new Date();
+    const conversation: Conversation = { 
+      ...insertConversation, 
+      id,
+      createdAt: now,
+      userId: insertConversation.userId || null
+    };
+    this.conversations.set(id, conversation);
+    return conversation;
+  }
+  
+  async updateConversation(id: number, update: Partial<Conversation>): Promise<Conversation | undefined> {
+    const conversation = this.conversations.get(id);
+    if (!conversation) return undefined;
+    
+    const updatedConversation: Conversation = { ...conversation, ...update };
+    this.conversations.set(id, updatedConversation);
+    return updatedConversation;
+  }
+  
+  async deleteConversation(id: number): Promise<boolean> {
+    return this.conversations.delete(id);
+  }
+  
+  // Message methods
+  async getMessages(conversationId: number): Promise<Message[]> {
+    return Array.from(this.messages.values())
+      .filter(message => message.conversationId === conversationId)
+      .sort((a, b) => {
+        if (!a.timestamp || !b.timestamp) return 0;
+        return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+      });
+  }
+  
+  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+    const id = this.messageId++;
+    const now = new Date();
+    const message: Message = { 
+      ...insertMessage, 
+      id,
+      timestamp: now,
+      systemSources: insertMessage.systemSources || [],
+      visualizations: insertMessage.visualizations || []
+    };
+    this.messages.set(id, message);
+    return message;
+  }
+  
+  async updateMessage(id: number, updates: Partial<Message>): Promise<Message | undefined> {
+    const message = this.messages.get(id);
+    if (!message) return undefined;
+    
+    const updatedMessage: Message = { ...message, ...updates };
+    this.messages.set(id, updatedMessage);
+    return updatedMessage;
+  }
+}
+
+export const storage = new MemStorage();

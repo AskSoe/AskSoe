@@ -1,0 +1,331 @@
+import { 
+  users, type User, type InsertUser,
+  systems, type System, type InsertSystem,
+  llmProviders, type LlmProvider, type InsertLlmProvider,
+  conversations, type Conversation, type InsertConversation,
+  messages, type Message, type InsertMessage
+
+export interface IStorage {
+  // User methods
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  
+  // System methods
+  getSystems(): Promise<System[]>;
+  getSystem(id: number): Promise<System | undefined>;
+  createSystem(system: InsertSystem): Promise<System>;
+  updateSystem(id: number, system: Partial<System>): Promise<System | undefined>;
+  deleteSystem(id: number): Promise<boolean>;
+  
+  // LLM Provider methods
+  getLlmProviders(): Promise<LlmProvider[]>;
+  getLlmProvider(id: number): Promise<LlmProvider | undefined>;
+  getActiveLlmProvider(): Promise<LlmProvider | undefined>;
+  createLlmProvider(provider: InsertLlmProvider): Promise<LlmProvider>;
+  updateLlmProvider(id: number, provider: Partial<LlmProvider>): Promise<LlmProvider | undefined>;
+  setActiveLlmProvider(id: number): Promise<LlmProvider | undefined>;
+  
+  // Conversation methods
+  getConversations(): Promise<Conversation[]>;
+  getConversation(id: number): Promise<Conversation | undefined>;
+  createConversation(conversation: InsertConversation): Promise<Conversation>;
+  updateConversation(id: number, conversation: Partial<Conversation>): Promise<Conversation | undefined>;
+  deleteConversation(id: number): Promise<boolean>;
+  
+  // Message methods
+  getMessages(conversationId: number): Promise<Message[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
+}
+
+export class MemStorage implements IStorage {
+  private users: Map<number, User>;
+  private systems: Map<number, System>;
+  private llmProviders: Map<number, LlmProvider>;
+  private conversations: Map<number, Conversation>;
+  private messages: Map<number, Message>;
+  
+  private userId: number;
+  private systemId: number;
+  private llmProviderId: number;
+  private conversationId: number;
+  private messageId: number;
+
+  constructor() {
+    this.users = new Map();
+    this.systems = new Map();
+    this.llmProviders = new Map();
+    this.conversations = new Map();
+    this.messages = new Map();
+    
+    this.userId = 1;
+    this.systemId = 1;
+    this.llmProviderId = 1;
+    this.conversationId = 1;
+    this.messageId = 1;
+    
+    // Add default systems
+    this.initializeDefaultData();
+  }
+
+  private initializeDefaultData() {
+    // Add some default systems
+    this.createSystem({
+      name: "Salesforce CRM",
+      type: "crm",
+      connectionDetails: {
+        apiUrl: "https://api.salesforce.com",
+        apiVersion: "v56.0"
+      },
+      status: "connected"
+    });
+    
+    this.createSystem({
+      name: "SAP ERP",
+      type: "erp",
+      connectionDetails: {
+        apiUrl: "https://api.sap.com",
+        apiVersion: "v2"
+      },
+      status: "connected"
+    });
+    
+    this.createSystem({
+      name: "Tableau",
+      type: "visualization",
+      connectionDetails: {
+        apiUrl: "https://api.tableau.com",
+        apiVersion: "v1"
+      },
+      status: "limited"
+    });
+    
+    // Add default LLM provider
+    this.createLlmProvider({
+      name: "Azure OpenAI (GPT-4)",
+      type: "azure",
+      apiKey: process.env.OPENAI_API_KEY || "",
+      settings: {
+        model: "gpt-4o",
+        temperature: 0.7
+      },
+      isActive: true
+    });
+    
+    // Add example LLM providers
+    this.createLlmProvider({
+      name: "Anthropic Claude",
+      type: "anthropic",
+      settings: {
+        model: "claude-3-opus",
+        temperature: 0.7
+      },
+      isActive: false
+    });
+    
+    this.createLlmProvider({
+      name: "OpenAI API",
+      type: "openai",
+      settings: {
+        model: "gpt-4o",
+        temperature: 0.7
+      },
+      isActive: false
+    });
+    
+    // Create a default conversation
+    const conversation = this.createConversation({
+      title: "Customer Retention Analysis",
+      userId: 1
+    });
+    
+    // Add example messages
+    this.createMessage({
+      conversationId: conversation.id,
+      content: "Show me customer retention metrics for the last quarter compared to previous quarters.",
+      role: "user",
+      systemSources: [],
+      visualizations: []
+    });
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.username === username,
+    );
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const id = this.userId++;
+    const user: User = { ...insertUser, id };
+    this.users.set(id, user);
+    return user;
+  }
+  
+  // System methods
+  async getSystems(): Promise<System[]> {
+    return Array.from(this.systems.values());
+  }
+  
+  async getSystem(id: number): Promise<System | undefined> {
+    return this.systems.get(id);
+  }
+  
+  async createSystem(insertSystem: InsertSystem): Promise<System> {
+    const id = this.systemId++;
+    const now = new Date();
+    const system: System = { 
+      ...insertSystem, 
+      id,
+      lastSynced: now
+    };
+    this.systems.set(id, system);
+    return system;
+  }
+  
+  async updateSystem(id: number, update: Partial<System>): Promise<System | undefined> {
+    const system = this.systems.get(id);
+    if (!system) return undefined;
+    
+    const updatedSystem = { ...system, ...update };
+    this.systems.set(id, updatedSystem);
+    return updatedSystem;
+  }
+  
+  async deleteSystem(id: number): Promise<boolean> {
+    return this.systems.delete(id);
+  }
+  
+  // LLM Provider methods
+  async getLlmProviders(): Promise<LlmProvider[]> {
+    return Array.from(this.llmProviders.values());
+  }
+  
+  async getLlmProvider(id: number): Promise<LlmProvider | undefined> {
+    return this.llmProviders.get(id);
+  }
+  
+  async getActiveLlmProvider(): Promise<LlmProvider | undefined> {
+    return Array.from(this.llmProviders.values()).find(provider => provider.isActive);
+  }
+  
+  async createLlmProvider(insertProvider: InsertLlmProvider): Promise<LlmProvider> {
+    const id = this.llmProviderId++;
+    const provider: LlmProvider = { ...insertProvider, id };
+    
+    // If this is marked as active, deactivate all others
+    if (provider.isActive) {
+      for (const [existingId, existingProvider] of this.llmProviders.entries()) {
+        if (existingProvider.isActive) {
+          this.llmProviders.set(existingId, { ...existingProvider, isActive: false });
+        }
+      }
+    }
+    
+    this.llmProviders.set(id, provider);
+    return provider;
+  }
+  
+  async updateLlmProvider(id: number, update: Partial<LlmProvider>): Promise<LlmProvider | undefined> {
+    const provider = this.llmProviders.get(id);
+    if (!provider) return undefined;
+    
+    const updatedProvider = { ...provider, ...update };
+    
+    // If this is being set to active, deactivate all others
+    if (update.isActive) {
+      for (const [existingId, existingProvider] of this.llmProviders.entries()) {
+        if (existingId !== id && existingProvider.isActive) {
+          this.llmProviders.set(existingId, { ...existingProvider, isActive: false });
+        }
+      }
+    }
+    
+    this.llmProviders.set(id, updatedProvider);
+    return updatedProvider;
+  }
+  
+  async setActiveLlmProvider(id: number): Promise<LlmProvider | undefined> {
+    const provider = this.llmProviders.get(id);
+    if (!provider) return undefined;
+    
+    // Deactivate all providers
+    for (const [existingId, existingProvider] of this.llmProviders.entries()) {
+      if (existingProvider.isActive) {
+        this.llmProviders.set(existingId, { ...existingProvider, isActive: false });
+      }
+    }
+    
+    // Activate the requested provider
+    const updatedProvider = { ...provider, isActive: true };
+    this.llmProviders.set(id, updatedProvider);
+    
+    return updatedProvider;
+  }
+  
+  // Conversation methods
+  async getConversations(): Promise<Conversation[]> {
+    return Array.from(this.conversations.values()).sort((a, b) => {
+      if (!a.createdAt || !b.createdAt) return 0;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
+  
+  async getConversation(id: number): Promise<Conversation | undefined> {
+    return this.conversations.get(id);
+  }
+  
+  async createConversation(insertConversation: InsertConversation): Promise<Conversation> {
+    const id = this.conversationId++;
+    const now = new Date();
+    const conversation: Conversation = { 
+      ...insertConversation, 
+      id,
+      createdAt: now
+    };
+    this.conversations.set(id, conversation);
+    return conversation;
+  }
+  
+  async updateConversation(id: number, update: Partial<Conversation>): Promise<Conversation | undefined> {
+    const conversation = this.conversations.get(id);
+    if (!conversation) return undefined;
+    
+    const updatedConversation = { ...conversation, ...update };
+    this.conversations.set(id, updatedConversation);
+    return updatedConversation;
+  }
+  
+  async deleteConversation(id: number): Promise<boolean> {
+    return this.conversations.delete(id);
+  }
+  
+  // Message methods
+  async getMessages(conversationId: number): Promise<Message[]> {
+    return Array.from(this.messages.values())
+      .filter(message => message.conversationId === conversationId)
+      .sort((a, b) => {
+        if (!a.timestamp || !b.timestamp) return 0;
+        return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+      });
+  }
+  
+  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+    const id = this.messageId++;
+    const now = new Date();
+    const message: Message = { 
+      ...insertMessage, 
+      id,
+      timestamp: now
+    };
+    this.messages.set(id, message);
+    return message;
+  }
+}
+
+export const storage = new MemStorage();

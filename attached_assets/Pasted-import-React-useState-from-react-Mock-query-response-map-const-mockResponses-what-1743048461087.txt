@@ -1,0 +1,57 @@
+import React, { useState } from "react";
+
+// Mock query/response map
+const mockResponses = {
+  "what’s our q4 pipeline by region?": "Here's the Q4 pipeline breakdown:\n\n- APAC: $1.2M\n- EMEA: $850K\n- AMER: $2.5M\n\nTotal: $4.55M",
+  "how many open deals do we have?": "There are 134 open deals across all regions.\n\nTop 3 reps:\n1. Jordan Lee – 22 deals\n2. Priya Mehta – 19 deals\n3. Daniel Shaw – 17 deals",
+  "show me a chart of revenue by product": "🟦 Product A – $1.3M\n🟥 Product B – $2.1M\n🟩 Product C – $950K\n\n(TODO: Embed a real chart here)",
+  "what’s our churn rate?": "Customer churn for Q3 was 3.8%, down from 5.1% in Q2.\n\nKey reasons:\n- Price sensitivity in mid-market\n- Onboarding delays for new clients"
+};
+
+// Clean input and get reply
+const getSoeResponse = (input) => {
+  const cleaned = input.toLowerCase().trim();
+  return mockResponses[cleaned] || "Sorry, I couldn't find that data yet. Try asking something like:\n• What’s our Q4 pipeline by region?\n• Show me a chart of revenue by product.";
+};
+
+export default function SoeChat() {
+  const [messages, setMessages] = useState([]);
+  const [userInput, setUserInput] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!userInput.trim()) return;
+
+    const newUserMessage = { sender: "user", text: userInput };
+    const newSoeMessage = { sender: "soe", text: getSoeResponse(userInput) };
+
+    setMessages((prev) => [...prev, newUserMessage, newSoeMessage]);
+    setUserInput("");
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto p-4 bg-white shadow rounded-xl">
+      <h2 className="text-2xl font-semibold mb-4">Ask Soe</h2>
+      <div className="h-80 overflow-y-auto border rounded p-4 mb-4 bg-gray-50">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`mb-2 ${msg.sender === "soe" ? "text-blue-700" : "text-gray-800"}`}>
+            <strong>{msg.sender === "soe" ? "Soe: " : "You: "}</strong>
+            <pre className="whitespace-pre-wrap">{msg.text}</pre>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          type="text"
+          className="flex-1 border rounded p-2"
+          placeholder="Ask a question..."
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+        />
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Send
+        </button>
+      </form>
+    </div>
+  );
+}

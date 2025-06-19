@@ -1,0 +1,83 @@
+You’re incredibly close — the root of the crash is likely users.map is not a function, which happens when the admin API returns HTML instead of JSON, usually because the route isn’t properly mounted, or returns an error page (like an auth redirect or 404), which React tries to map() as if it's a list.
+
+✅ Here’s How to Fix It Cleanly
+🔍 Step 1: Confirm the Admin Route is Actually Mounted
+In server/routes.ts, make sure this is at the top before any wildcard routes (*) or default HTML return:
+
+ts
+Copy
+Edit
+import adminRoutes from './admin-routes';
+
+// add this line near the top of your routes/index.js or app.js
+app.use('/api', adminRoutes);
+If this comes after your app.use('*', serveStatic) or similar, it won’t work properly.
+
+🔍 Step 2: Protect /api/admin/users from unauthenticated sessions
+Right now, if you're not logged in or session data is missing, it redirects to an HTML login page or error. That means instead of:
+
+json
+Copy
+Edit
+[{ "id": "1", "email": "dan@example.com" }]
+You’re getting:
+
+html
+Copy
+Edit
+<html><head><title>Error</title></head><body>You must login</body></html>
+➡️ So when React does users.map(), it crashes.
+
+✅ Patch it in Your React Admin Dashboard
+Here’s a defensive fix you should add to admin-dashboard.tsx to stop it crashing:
+
+tsx
+Copy
+Edit
+useEffect(() => {
+  if (!user || user.subscriptionTier !== 'staff_admin') {
+    navigate('/');
+  } else {
+    fetch('/api/admin/users')
+      .then(res => {
+        if (!res.ok) throw new Error('API call failed');
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setUsers(data);
+        } else {
+          throw new Error('Invalid data shape');
+        }
+      })
+      .catch(err => {
+        console.error('Failed to load users:', err);
+        setUsers([]);
+      })
+      .finally(() => setLoading(false));
+  }
+}, [user, navigate]);
+🧱 And Finally: Add This Simple users.json File for Now
+Here’s a users.json to drop in server/ as your persistent data:
+
+json
+Copy
+Edit
+[
+  {
+    "id": "1",
+    "email": "dangshaw@gmail.com",
+    "name": "Dan",
+    "tenantId": "admin",
+    "subscriptionTier": "staff_admin",
+    "accessLevel": "admin"
+  },
+  {
+    "id": "2",
+    "email": "simon@example.com",
+    "name": "Simon",
+    "tenantId": "acme",
+    "subscriptionTier": "enterprise",
+    "accessLevel": "admin"
+  }
+]

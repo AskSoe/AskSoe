@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "username": "dangshaw@gmail.com",
+    "password": "$2b$10$MH0pOliMrGkMM1seYBPomOvLP4fPZuenP86gu54cWOE/EYbA0lF0S",
+    "email": "dangshaw@gmail.com",
+    "firstName": "Dan",
+    "lastName": "Shaw",
+    "subscriptionTier": "staff_admin",
+    "accessLevel": "admin",
+    "tenantId": "global",
+    "isActive": true,
+    "createdAt": "2025-05-27T21:23:43.000Z",
+    "lastLoginAt": "2025-06-03T01:41:32.294Z",
+    "isAdmin": true
+  },
+  {
+    "id": 2,
+    "username": "simon@company.com",
+    "password": "$2b$10$v3NL9yLWFEmW3VnBWC.NeughQJK6/j38RVyUY4eiiSICPs1LLfmCm",
+    "email": "simon@company.com",
+    "firstName": "Simon",
+    "lastName": "Hinde",
+    "subscriptionTier": "enterprise",
+    "accessLevel": "admin",
+    "tenantId": "acme-corp",
+    "isActive": true,
+    "createdAt": "2025-05-27T21:23:43.000Z",
+    "lastLoginAt": null,
+    "isAdmin": false
+  },
+  {
+    "id": 3,
+    "username": "Pam",
+    "password": "$2b$10$1rv.7aQQUYTDm6suDVaYlO4oYeXeYjyjrwONb1uEAjC3XXZuSMHey",
+    "email": "pamshaw321@gmail.com",
+    "firstName": "",
+    "lastName": "",
+    "subscriptionTier": "enterprise",
+    "accessLevel": "admin",
+    "tenantId": "default",
+    "isActive": true,
+    "createdAt": "2025-05-27T21:48:39.550Z",
+    "lastLoginAt": null,
+    "isAdmin": false
+  }
+]

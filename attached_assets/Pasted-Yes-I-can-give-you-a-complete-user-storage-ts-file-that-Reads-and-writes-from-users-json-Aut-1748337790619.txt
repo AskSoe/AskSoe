@@ -1,0 +1,105 @@
+Yes — I can give you a complete user-storage.ts file that:
+
+✅ Reads and writes from users.json
+✅ Automatically assigns user IDs
+✅ Fails safely with clear errors
+✅ Works with your admin-routes.ts to create/update/delete users
+✅ Is copy-paste ready for Replit (or any Node project)
+
+This will fix the “can’t create user” issue, and give you the persistent storage SOE needs to function like a real SaaS.
+
+🛠 Here's the Fix-All File: server/user-storage.ts
+ts
+Copy
+Edit
+// server/user-storage.ts
+import fs from 'fs/promises';
+import path from 'path';
+
+const USERS_FILE = path.resolve(__dirname, 'users.json');
+
+async function readUsers() {
+  try {
+    const data = await fs.readFile(USERS_FILE, 'utf-8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error('Failed to read users.json:', err);
+    return [];
+  }
+}
+
+async function writeUsers(users) {
+  try {
+    await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+  } catch (err) {
+    console.error('Failed to write users.json:', err);
+    throw new Error('Could not write users file');
+  }
+}
+
+export async function getAllUsers() {
+  return await readUsers();
+}
+
+export async function getUserByEmail(email) {
+  const users = await readUsers();
+  return users.find(u => u.email === email);
+}
+
+export async function createUser(userData) {
+  try {
+    const users = await readUsers();
+    const newUser = {
+      id: users.length ? Math.max(...users.map(u => u.id)) + 1 : 1,
+      createdAt: new Date().toISOString(),
+      ...userData
+    };
+    users.push(newUser);
+    await writeUsers(users);
+    return newUser;
+  } catch (err) {
+    console.error('Error saving user:', err);
+    throw new Error('Failed to save user');
+  }
+}
+
+export async function updateUser(id, updates) {
+  const users = await readUsers();
+  const index = users.findIndex(u => u.id === Number(id));
+  if (index === -1) return null;
+  users[index] = { ...users[index], ...updates };
+  await writeUsers(users);
+  return users[index];
+}
+
+export async function deleteUser(id) {
+  let users = await readUsers();
+  const initialCount = users.length;
+  users = users.filter(u => u.id !== Number(id));
+  if (users.length === initialCount) return false;
+  await writeUsers(users);
+  return true;
+}
+✅ What to Do Next
+In Replit, create (or overwrite) this file at:
+server/user-storage.ts
+
+In server/admin-routes.ts, import and use these:
+
+ts
+Copy
+Edit
+import {
+  getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser
+} from './user-storage';
+Make sure users.json exists at server/users.json with valid JSON:
+
+json
+Copy
+Edit
+[]
+Test adding a user from your admin dashboard.
+

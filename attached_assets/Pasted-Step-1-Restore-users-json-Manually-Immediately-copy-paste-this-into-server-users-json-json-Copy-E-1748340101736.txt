@@ -1,0 +1,85 @@
+Step 1: Restore users.json Manually
+Immediately copy-paste this into server/users.json:
+
+json
+Copy
+Edit
+[
+  {
+    "id": 1,
+    "name": "Dan",
+    "email": "dangshaw@gmail.com",
+    "tenantId": "global",
+    "accessLevel": "admin",
+    "subscriptionTier": "staff_admin",
+    "isAdmin": true,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "name": "Simon",
+    "email": "simon@example.com",
+    "tenantId": "acme",
+    "accessLevel": "admin",
+    "subscriptionTier": "enterprise",
+    "isAdmin": false,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+]
+Save this file.
+
+✅ Step 2: Patch createUser() to Prevent Overwrite Risk
+Update your createUser() in user-storage.ts to this hardened version:
+
+ts
+Copy
+Edit
+export async function createUser(newUser: Omit<FileUser, 'id' | 'createdAt'>): Promise<FileUser> {
+  try {
+    const users = await readUsers();
+
+    // Prevent writing over an empty file if read failed
+    if (!Array.isArray(users)) {
+      throw new Error('User storage is not an array. Refusing to proceed.');
+    }
+
+    const id = users.length ? Math.max(...users.map(u => u.id)) + 1 : 1;
+    const createdAt = new Date().toISOString();
+
+    const userWithId: FileUser = { ...newUser, id, createdAt };
+
+    users.push(userWithId);
+    await writeUsers(users);
+
+    return userWithId;
+  } catch (err) {
+    console.error('Error in createUser():', err);
+    throw new Error('Failed to save user');
+  }
+}
+This:
+
+Checks if the users array is valid before writing.
+
+Prevents writing undefined or corrupted data.
+
+Logs a clean error for debugging if anything fails.
+
+✅ Step 3: Add Logging
+Temporarily add this inside writeUsers():
+
+ts
+Copy
+Edit
+console.log('Saving users:', users.length, 'users');
+Then when you try again to create a user:
+
+Watch the Replit console logs.
+
+See if it logs the new count correctly.
+
+Check users.json — if it becomes empty, stop immediately.
+
+🧠 Final Safety Tip
+Back up your users.json file regularly. It’s your database until you move to a real one (which we can do later).
+

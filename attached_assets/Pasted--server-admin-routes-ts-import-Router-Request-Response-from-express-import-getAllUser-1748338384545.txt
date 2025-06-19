@@ -1,0 +1,83 @@
+// server/admin-routes.ts
+import { Router, Request, Response } from 'express';
+import {
+  getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  getUserByEmail
+} from './user-storage';
+
+export const adminRouter = Router();
+
+// Admin auth check
+const requireAdmin = (req: Request, res: Response, next: any) => {
+  const user = req.user;
+  if (!user || user.email !== 'dangshaw@gmail.com') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  next();
+};
+
+// GET all users
+adminRouter.get('/users', requireAdmin, async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.json(users);
+  } catch (err) {
+    console.error('Failed to fetch users:', err);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+// CREATE a new user
+adminRouter.post('/users', requireAdmin, async (req, res) => {
+  try {
+    const { name, email, tenantId, accessLevel, subscriptionTier, isAdmin } = req.body;
+
+    if (!email || !name || !tenantId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const existing = await getUserByEmail(email);
+    if (existing) {
+      return res.status(409).json({ error: 'User already exists' });
+    }
+
+    const user = await createUser({ name, email, tenantId, accessLevel, subscriptionTier, isAdmin });
+    res.status(201).json(user);
+  } catch (err) {
+    console.error('Failed to create user:', err);
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+});
+
+// UPDATE a user
+adminRouter.put('/users/:id', requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const updated = await updateUser(id, req.body);
+    if (!updated) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(updated);
+  } catch (err) {
+    console.error('Failed to update user:', err);
+    res.status(500).json({ error: 'Failed to update user' });
+  }
+});
+
+// DELETE a user
+adminRouter.delete('/users/:id', requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const success = await deleteUser(id);
+    if (!success) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(204).end();
+  } catch (err) {
+    console.error('Failed to delete user:', err);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+});

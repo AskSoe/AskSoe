@@ -1,0 +1,73 @@
+I’m having trouble with my OpenAI API key—it’s not working when I send a question.
+Please help me fix the following in my Replit project:
+
+Securely store my OpenAI API key using Replit’s Secrets feature
+
+Make sure my backend uses that key correctly to call OpenAI’s /v1/chat/completions endpoint
+
+Return the assistant’s response to the frontend
+
+Handle errors gracefully if the key is missing, invalid, or fails
+
+Also, write clean and simple backend code using Express.js and node-fetch, and make sure my frontend isn’t sending the key directly.
+
+🧩 Sample Fix Code for Replit
+Here’s a full backend handler (server.js) you can paste in or give to Replit:
+
+js
+Copy
+Edit
+const express = require('express');
+const fetch = require('node-fetch');
+const app = express();
+require('dotenv').config();
+
+app.use(express.json());
+
+const PORT = process.env.PORT || 3000;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+app.post('/api/ask', async (req, res) => {
+  const { prompt } = req.body;
+
+  if (!OPENAI_API_KEY) {
+    return res.status(500).json({ error: 'Missing OpenAI API key' });
+  }
+
+  if (!prompt) {
+    return res.status(400).json({ error: 'Missing prompt' });
+  }
+
+  try {
+    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: 'You are SOE, a helpful assistant connected to enterprise systems.' },
+          { role: 'user', content: prompt }
+        ]
+      })
+    });
+
+    const data = await openaiRes.json();
+
+    if (data.error) {
+      console.error('OpenAI API Error:', data.error);
+      return res.status(500).json({ error: data.error.message });
+    }
+
+    const reply = data.choices[0]?.message?.content || "No response";
+    res.json({ response: reply });
+
+  } catch (err) {
+    console.error('Server Error:', err);
+    res.status(500).json({ error: 'Something went wrong connecting to OpenAI.' });
+  }
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,0 +1,104 @@
+// src/pages/admin-dashboard.tsx
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../hooks/use-auth-context';
+import { useNavigate } from 'react-router-dom';
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  tenantId: string;
+  subscriptionTier: 'free' | 'enterprise' | 'staff_admin';
+  accessLevel: 'user' | 'admin';
+}
+
+const AdminDashboard: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user || user.subscriptionTier !== 'staff_admin') {
+      navigate('/');
+    } else {
+      fetch('/api/admin/users')
+        .then(res => res.json())
+        .then(setUsers)
+        .finally(() => setLoading(false));
+    }
+  }, [user, navigate]);
+
+  const updateUser = (id: string, updates: Partial<User>) => {
+    fetch(`/api/admin/users/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates)
+    })
+      .then(res => res.json())
+      .then(updated => {
+        setUsers(prev => prev.map(u => u.id === id ? updated : u));
+      });
+  };
+
+  const deleteUser = (id: string) => {
+    fetch(`/api/admin/users/${id}`, { method: 'DELETE' })
+      .then(() => setUsers(prev => prev.filter(u => u.id !== id)));
+  };
+
+  if (loading) return <div className="p-4">Loading...</div>;
+
+  return (
+    <div className="p-4 text-[#F4EFE6] bg-gradient-to-b from-blue-900 to-blue-700 min-h-screen">
+      <h1 className="text-2xl font-bold mb-4">Staff Admin Dashboard</h1>
+      <table className="w-full bg-blue-800 rounded">
+        <thead>
+          <tr>
+            <th className="p-2 text-left">Name</th>
+            <th className="p-2 text-left">Email</th>
+            <th className="p-2 text-left">Tier</th>
+            <th className="p-2 text-left">Access</th>
+            <th className="p-2 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map(user => (
+            <tr key={user.id} className="border-t border-blue-600">
+              <td className="p-2">{user.name}</td>
+              <td className="p-2">{user.email}</td>
+              <td className="p-2">
+                <select
+                  value={user.subscriptionTier}
+                  onChange={e => updateUser(user.id, { subscriptionTier: e.target.value as any })}
+                  className="bg-blue-700 text-white"
+                >
+                  <option value="free">Free</option>
+                  <option value="enterprise">Enterprise</option>
+                  <option value="staff_admin">Staff Admin</option>
+                </select>
+              </td>
+              <td className="p-2">
+                <select
+                  value={user.accessLevel}
+                  onChange={e => updateUser(user.id, { accessLevel: e.target.value as any })}
+                  className="bg-blue-700 text-white"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </td>
+              <td className="p-2">
+                <button
+                  onClick={() => deleteUser(user.id)}
+                  className="bg-red-600 text-white px-2 py-1 rounded"
+                >Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default AdminDashboard;

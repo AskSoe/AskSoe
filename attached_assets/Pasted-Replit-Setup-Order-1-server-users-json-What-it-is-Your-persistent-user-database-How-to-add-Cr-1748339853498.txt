@@ -1,0 +1,98 @@
+Replit Setup Order
+1. 🔧 server/users.json
+What it is: Your persistent user database
+How to add:
+
+Create a new file in Replit: server/users.json
+
+Paste in this starter content:
+
+json
+Copy
+Edit
+[
+  {
+    "id": 1,
+    "name": "Dan",
+    "email": "dangshaw@gmail.com",
+    "tenantId": "global",
+    "accessLevel": "admin",
+    "subscriptionTier": "staff_admin",
+    "isAdmin": true,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "name": "Simon",
+    "email": "simon@example.com",
+    "tenantId": "acme",
+    "accessLevel": "admin",
+    "subscriptionTier": "enterprise",
+    "isAdmin": false,
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+]
+2. ⚙️ server/user-storage.ts
+What it is: Your code to read/write to users.json
+How to add:
+
+Overwrite or create this file in Replit: server/user-storage.ts
+
+Copy the entire contents from the “User Storage” document above
+
+This replaces the broken in-memory or half-wired version.
+
+3. 🧠 server/admin-routes.ts
+What it is: Your actual Admin API
+How to add:
+
+Replace the existing admin-routes.ts in server/ with the “Admin Routes” document above
+
+This file handles:
+
+Creating, editing, deleting users
+
+Ensuring only you (Dan) can access these endpoints
+
+4. 🔌 server/routes.ts
+What it is: Your master router that wires everything in
+Check for this line (edit if missing):
+
+ts
+Copy
+Edit
+import { adminRouter } from './admin-routes';
+apiRouter.use('/admin', adminRouter);
+Without this, none of your admin endpoints will work.
+
+5. (Optional but helpful): Test it with test-create-user.ts
+Want to sanity-check that everything works without even touching the frontend? Create this:
+
+File: server/test-create-user.ts
+
+ts
+Copy
+Edit
+import { createUser, getAllUsers } from './user-storage';
+
+async function runTest() {
+  const newUser = await createUser({
+    name: 'Test User',
+    email: 'testuser@example.com',
+    tenantId: 'testcorp',
+    subscriptionTier: 'free',
+    accessLevel: 'user',
+    isAdmin: false
+  });
+
+  console.log('Created:', newUser);
+  console.log('Current users:', await getAllUsers());
+}
+
+runTest().catch(console.error);
+Then run in the Replit shell:
+
+bash
+Copy
+Edit
+npx tsx server/test-create-user.ts

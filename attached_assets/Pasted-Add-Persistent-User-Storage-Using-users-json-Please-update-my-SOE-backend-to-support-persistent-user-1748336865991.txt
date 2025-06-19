@@ -1,0 +1,92 @@
+Add Persistent User Storage Using users.json
+Please update my SOE backend to support persistent user storage using a users.json file instead of in-memory variables.
+
+🔧 1. Create the Data File
+In server/users.json, create an initial array of real users:
+
+json
+Copy
+Edit
+[
+  {
+    "id": 1,
+    "name": "Dan",
+    "email": "dangshaw@gmail.com",
+    "tenantId": "global",
+    "subscriptionTier": "staff_admin",
+    "accessLevel": "admin"
+  },
+  {
+    "id": 2,
+    "name": "Simon",
+    "email": "simon@example.com",
+    "tenantId": "acme",
+    "subscriptionTier": "enterprise",
+    "accessLevel": "admin"
+  }
+]
+🔧 2. Update storage.ts to Use This File
+Replace any in-memory user array with file-based functions:
+
+ts
+Copy
+Edit
+import fs from 'fs/promises';
+const USERS_FILE = './server/users.json';
+
+async function readUsers() {
+  const data = await fs.readFile(USERS_FILE, 'utf-8');
+  return JSON.parse(data);
+}
+
+async function writeUsers(users) {
+  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+export async function getAllUsers() {
+  return await readUsers();
+}
+
+export async function updateUser(id, updates) {
+  const users = await readUsers();
+  const index = users.findIndex(u => u.id === Number(id));
+  if (index === -1) return null;
+  users[index] = { ...users[index], ...updates };
+  await writeUsers(users);
+  return users[index];
+}
+
+export async function deleteUser(id) {
+  let users = await readUsers();
+  users = users.filter(u => u.id !== Number(id));
+  await writeUsers(users);
+}
+
+export async function createUser(newUser) {
+  const users = await readUsers();
+  newUser.id = users.length ? Math.max(...users.map(u => u.id)) + 1 : 1;
+  users.push(newUser);
+  await writeUsers(users);
+  return newUser;
+}
+🔧 3. Connect These Functions to admin-routes.ts
+Use these new file-based functions for:
+
+GET /api/admin/users
+
+PUT /api/admin/users/:id
+
+DELETE /api/admin/users/:id
+
+POST /api/admin/users
+
+With this setup, I want the SOE platform to be able to:
+
+Load all users on startup
+
+Add/edit/delete users from the admin console
+
+Persist changes across page reloads or server restarts
+
+DO NOT use in-memory arrays anymore. Everything must read/write from users.json.
+

@@ -1,0 +1,93 @@
+### RepLit Instructions — Admin Dashboard, Plan-Based Permissions, and Integrations
+
+**Project Context:**
+I'm building a platform called SOE (System of Everything). It's a universal chat-based interface that connects to enterprise systems like Salesforce, SAP, Tableau, etc. I need the following features built into the app, keeping in mind the code will run in Replit and may later be moved to a production-grade stack.
+
+---
+
+## 1. Admin Login & Dashboard
+
+**Purpose:** To manage user accounts, view usage, and administer access/tiers manually.
+
+**Instructions:**
+- Create a protected route `/admin`
+- Restrict access to users with `isAdmin = true` (use email for now or a flag in the database)
+- Admin panel should:
+  - Show a list of users and their current plan
+  - Display their connected integrations (Salesforce, Tableau, etc.)
+  - Have buttons to manually upgrade/downgrade plan tier
+  - Option to delete/reset user or connection token
+
+---
+
+## 2. Plan-Based Permissions
+
+**Free Tier:**
+- Can only connect **1 system**
+- Read-only access only
+- Limited queries per day (e.g. 10)
+
+**Pro Tier:**
+- Connect multiple systems (CRM + BI)
+- Still read-only
+- Unlimited queries
+
+**Enterprise Tier:**
+- Full read/write access to connected systems
+- Role-based access control coming later
+
+**Implementation:**
+- Store plan type as `plan: 'free' | 'pro' | 'enterprise'` on the user record
+- In the UI, check `user.plan` before allowing certain features (like adding multiple systems or issuing write commands)
+
+---
+
+## 3. Stripe Integration
+
+**Purpose:** Upgrade users from free to paid plans
+
+**Instructions:**
+- Use Stripe Checkout for subscriptions
+- Assign the correct plan tier to user upon successful payment
+- Store Stripe `customerId`, `subscriptionId`, and `plan` in the user database
+- Show plan tier and upgrade/downgrade controls in user settings page
+
+---
+
+## 4. OAuth-Based Integrations (Read-Only)
+
+**Systems to Support Initially:** Salesforce, Notion, Google Sheets
+
+**Instructions:**
+- Use OAuth 2.0 to allow users to connect their accounts
+- On success, store the access token and list the integration on their dashboard
+- For free tier users, only allow 1 integration
+- Use the token to fetch data (e.g., recent Salesforce deals)
+- Do **not** require admin-level access yet
+
+---
+
+## 5. Write-Enabled Integrations (Enterprise Tier Only)
+
+**Instructions:**
+- Add support for elevated scopes in OAuth for systems that allow read/write
+- Gate this behind the `enterprise` plan tier
+- Always ask for confirmation before executing write operations (e.g., "Update deal stage")
+
+---
+
+## 6. Bonus: Plan Gating in UI
+
+**Instructions:**
+- In the app UI, add conditional rendering logic:
+  - If user is on free plan and tries to connect a second integration, show an upgrade prompt
+  - If they try a write operation on read-only access, show: "This action requires a Pro plan"
+
+---
+
+Let me know if you want this modularized or documented differently. You can assume Node.js backend and React frontend for component placement.
+
+---
+
+Let’s build SOE to scale.
+

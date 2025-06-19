@@ -1,0 +1,115 @@
+You are acting as a full-stack software engineer inside Replit.
+Your job is to repair and restructure the backend of this SaaS application ("SOE") to meet real-world, multi-tenant production requirements.
+
+🧱 OBJECTIVE
+Rebuild the backend so that:
+
+Users are persisted in a users.json file, not in memory.
+
+New users can be created, modified, or deleted via real working admin endpoints.
+
+Users have structured roles and tiers, including:
+
+subscriptionTier: e.g., free, enterprise, staff_admin
+
+accessLevel: e.g., user, admin
+
+The app supports multi-tenant user access, scoped by login identity.
+
+Admin users can log in and see all users.
+
+All user management functions are only available to staff_admin users.
+
+Admin functionality should be reachable via /admin-dashboard on the frontend and /api/admin/users on the backend.
+
+Login sessions must persist for at least 30 minutes across refreshes, using cookies or localStorage.
+
+🔐 AUTHENTICATION REQUIREMENTS
+Use real file-based persistent storage (not memory).
+
+On login, save the session to a cookie.
+
+When navigating to any route (e.g., /admin-dashboard), the session should be validated against the stored session or user record.
+
+If no valid session exists, redirect to login.
+
+🛠️ BACKEND REQUIREMENTS
+Files:
+All users must be stored in a single file: users.json
+
+Create and maintain utility functions:
+
+getAllUsers()
+
+createUser(userObject)
+
+updateUser(userId, updates)
+
+deleteUser(userId)
+
+Endpoints:
+GET /api/admin/users → return all users (requires staff_admin)
+
+POST /api/admin/users/:id → update a user
+
+DELETE /api/admin/users/:id → delete a user
+
+POST /api/admin/users → create a new user (provide username, email, password, tier, access)
+
+Important:
+Ensure that all of these use the users.json file and NOT in-memory data.
+
+🧑‍💻 FRONTEND REQUIREMENTS
+Only show the crown icon and admin console link (/admin-dashboard) if the logged-in user has subscriptionTier: 'staff_admin'.
+
+In /admin-dashboard, display:
+
+Table of all users
+
+Dropdowns to modify subscriptionTier and accessLevel
+
+Buttons to delete users
+
+Form to create a new user
+
+All data shown and updated should be from real-time API calls, not dummy data.
+
+Errors like “failed to create user” must display properly, with an explanation (e.g. 401 auth error, invalid fields, etc.)
+
+🧠 INTENT CLARIFICATION
+This is a multi-tenant SaaS system in development. Users will eventually be from different companies.
+
+Each login should route the user to their own dashboard, with scoped permissions and access.
+
+The system must be easily extendable to allow more organizations to sign up and self-manage.
+
+The frontend should reflect real authentication state, and not rely on temporary or hardcoded logic.
+
+Do not assume hardcoded usernames/emails for access.
+
+🚫 DO NOT
+❌ Do not store user info in memory — only use users.json.
+
+❌ Do not hardcode admin checks based on email.
+
+❌ Do not generate mock data.
+
+❌ Do not skip file-based persistence.
+
+❌ Do not bypass the session or cookies for login state.
+
+✅ SUCCESS CHECKLIST
+Replit should consider the task complete only when:
+
+ Logging in as an admin user gives access to the admin console
+
+ Admin can view all users
+
+ Admin can add/edit/delete users
+
+ Users persist across page refreshes and browser sessions
+
+ All user data is stored in and served from users.json
+
+ Sessions expire only after 30 minutes of inactivity
+
