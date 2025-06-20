@@ -1,4 +1,4 @@
-node_modules
+node_modules/
 dist
 .DS_Store
 server/public
@@ -8,3 +8,4 @@ vite.config.ts.*
 .env.local
 .env.development
 .env.production
+*.log
