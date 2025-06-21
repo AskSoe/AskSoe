@@ -1,4 +1,4 @@
-import { type System, type InsertSystem } from "../../shared/schema";
+import { type System, type InsertSystem } from "../schema";
 import { storage } from "../storage";
 
 export interface SystemService {

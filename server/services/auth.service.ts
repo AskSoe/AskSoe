@@ -1,4 +1,4 @@
-import { type User } from "../../shared/schema";
+import { type User } from "../schema";
 import { storage } from "../storage";
 
 export interface AuthService {

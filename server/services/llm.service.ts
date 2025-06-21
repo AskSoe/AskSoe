@@ -1,4 +1,4 @@
-import { type LlmProvider, type InsertLlmProvider } from "../../shared/schema";
+import { type LlmProvider, type InsertLlmProvider } from "../schema";
 import { storage } from "../storage";
 
 export interface LlmService {

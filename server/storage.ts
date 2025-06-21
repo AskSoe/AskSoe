@@ -1,4 +1,4 @@
-import { 
+import {
   users, type User, type InsertUser,
   systems, type System, type InsertSystem,
   llmProviders, type LlmProvider, type InsertLlmProvider,
@@ -6,10 +6,12 @@ import {
   messages, type Message, type InsertMessage,
   oauthTokens, type OauthToken, type InsertOauthToken,
   documents, type Document, type InsertDocument,
-  AccessLevel, type AccessLevelType,
-  SubscriptionTier, type SubscriptionTierType,
-  tierLimits,
-  AuthProvider, type AuthProviderType } from "../shared/schema";
+} from "./schema";
+import {
+  AccessLevel, SubscriptionTier,
+  AuthProvider, type AuthProviderType,
+  type AccessLevelType, type SubscriptionTierType, tierLimits
+} from "../shared/schema";
 import bcrypt from "bcryptjs";
 
 export interface IStorage {

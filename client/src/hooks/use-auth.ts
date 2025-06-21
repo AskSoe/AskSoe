@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "../lib/queryClient";
 import { initSalesforceOAuth, canPerformWrite } from "@/lib/authApi";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "./use-auth-context";
-import { AccessLevel, type AccessLevelType } from "@shared/schema";
+import { AccessLevel, type AccessLevelType } from "../shared/schema";
 
 /**
  * Hook for initializing Salesforce OAuth flow

@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
 import { 
@@ -8,7 +9,7 @@ import {
   updateDocument, 
   deleteDocument
 } from "@/lib/documentApi";
-import { type Document, type DocumentUploadRequest } from "@shared/schema";
+import { type Document, type DocumentUploadRequest } from "../shared/schema";
 
 /**
  * Hook to fetch all documents

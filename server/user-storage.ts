@@ -2,7 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
-import { type User as SchemaUser, type InsertUser, type SubscriptionTierType, type AccessLevelType } from '../shared/schema';
+import { type User as SchemaUser, type InsertUser } from './schema';
+import { type SubscriptionTierType, type AccessLevelType } from '../shared/schema';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

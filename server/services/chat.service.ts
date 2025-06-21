@@ -1,4 +1,4 @@
-import { type Conversation, type InsertConversation, type Message, type InsertMessage } from "../../shared/schema";
+import { type Conversation, type InsertConversation, type Message, type InsertMessage } from "../schema";
 import { storage } from "../storage";
 import { handleMessage } from "../adapters/llm";
 

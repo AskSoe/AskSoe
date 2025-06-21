@@ -3,10 +3,13 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Express } from "express";
 import session from "express-session";
 import { validateUserLogin, getUserById } from "./user-storage";
-import { type User as SchemaUser, type AccessLevelType, type SubscriptionTierType, AccessLevel, SubscriptionTier } from "../shared/schema";
+import { type User as SchemaUser } from "./schema";
+import { type AccessLevelType, type SubscriptionTierType, AccessLevel, SubscriptionTier } from "../shared/schema";
 import createMemoryStore from "memorystore";
 import express from 'express';
 import { type User as StorageUser, type CreateUserData } from './user-storage';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // Extend Express's User type to include our schema properties
 declare global {

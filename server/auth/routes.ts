@@ -4,6 +4,9 @@ import { z } from 'zod';
 import { configureSalesforceOAuth, getUserAccessLevel } from './salesforce';
 import { canUserPerformWrite } from './llm-access';
 import { AccessLevel, type AccessLevelType } from '../../shared/schema';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { validateUserLogin, getUserById } from '../user-storage';
 
 // Schema definitions
 const salesforceOAuthInitSchema = z.object({

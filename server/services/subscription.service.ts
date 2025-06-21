@@ -1,4 +1,5 @@
-import { type User, type SubscriptionTierType, tierLimits, SubscriptionTier } from "../../shared/schema";
+import { type User } from "../schema";
+import { type SubscriptionTierType, tierLimits, SubscriptionTier } from "../../shared/schema";
 import { storage } from "../storage";
 
 export interface SubscriptionService {

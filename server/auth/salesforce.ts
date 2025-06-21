@@ -2,6 +2,8 @@ import { PassportStatic } from 'passport';
 import OAuth2Strategy from 'passport-oauth2';
 import { storage } from '../storage';
 import { AccessLevel, type AccessLevelType } from '../../shared/schema';
+import { Router } from 'express';
+import axios from 'axios';
 
 // Salesforce OAuth configuration
 // These must be set in environment variables
