@@ -1,4 +1,5 @@
 import { apiRequest } from './queryClient';
+import { AccessLevel, type AccessLevelType } from "@/shared/schema";
 
 /**
  * Login with username/email and password

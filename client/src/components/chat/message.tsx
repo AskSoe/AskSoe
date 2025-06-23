@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { Bot, UserIcon } from "lucide-react";
 import { ChartComponent } from "@/components/visualization/chart";
 import { DataTable } from "@/components/visualization/data-table";
-import { type Message } from '@shared/schema';
+import { type Message } from '@/shared/schema';
 
 interface UserMessageProps {
   message: Message;

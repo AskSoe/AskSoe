@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "./use-toast";
+import { type System } from "@/shared/schema";
+import { fetchSystems, connectSystem, updateSystem, disconnectSystem } from "@/lib/api";
 
 export function useSystems() {
   const { data: systems = [], isLoading, isError, error } = useQuery<System[]>({

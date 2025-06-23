@@ -209,6 +209,9 @@ export type LlmProviderRequest = z.infer<typeof llmProviderRequestSchema>;
 
 // Chart and visualization types
 export interface ChartData {
+  type: string;
+  title: string;
+  source?: string;
   labels: string[];
   datasets: Array<{
     label: string;
@@ -247,4 +250,4 @@ export function getAccessLevel(accessLevel: AccessLevelType): string {
     default:
       return "Unknown";
   }
-} 
+}

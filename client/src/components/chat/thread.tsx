@@ -5,7 +5,7 @@ import { TypingIndicator } from "@/components/chat/typing-indicator";
 import { Card, CardContent } from "@/components/ui/card";
 import { DatabaseIcon, GlobeIcon, WrenchIcon } from "lucide-react";
 import { webSocketClient } from "@/lib/websocket";
-import { type Message } from '@shared/schema';
+import { type Message } from '@/shared/schema';
 
 interface ChatThreadProps {
   conversationId?: number;

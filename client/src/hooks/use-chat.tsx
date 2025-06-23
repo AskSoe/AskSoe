@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { type Conversation } from "@shared/schema";
+import { type Conversation } from "@/shared/schema";
 
 interface ChatContextType {
   currentConversation: Conversation | null;

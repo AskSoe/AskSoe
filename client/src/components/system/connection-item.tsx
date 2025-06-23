@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Database, Settings, Trash2, ExternalLink, AlertCircle, CheckCircle, XCircle } from "lucide-react";
-import { type System } from "@shared/schema";
+import { type System } from "@/shared/schema";
 import { formatDistanceToNow } from "date-fns";
 
 interface ConnectionItemProps {

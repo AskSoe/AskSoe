@@ -16,7 +16,7 @@ import { useAuth } from "@/hooks/use-auth-context";
 import { sendMessage } from "@/lib/api";
 import { DocumentList } from "@/components/document";
 import { useToast } from "@/hooks/use-toast";
-import { type Conversation } from "@shared/schema";
+import { type Conversation } from "@/shared/schema";
 
 export default function Home() {
   // Animated system type for the welcome screen - only the last word changes

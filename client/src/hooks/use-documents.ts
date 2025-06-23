@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
-import { 
-  fetchDocuments, 
-  fetchConversationDocuments, 
+import {
+  fetchDocuments,
+  fetchUserDocuments,
+  fetchDocument,
+  fetchConversationDocuments,
   uploadDocument,
-
-  updateDocument, 
+  updateDocument,
   deleteDocument
 } from "@/lib/documentApi";
 import { type Document, type DocumentUploadRequest } from "../shared/schema";

@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type TableData } from '@shared/schema';
+import { type TableData } from '@/shared/schema';
 
 interface DataTableProps {
   data: TableData;

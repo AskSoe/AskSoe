@@ -25,7 +25,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { ConnectDialog } from "@/components/system/connect-dialog";
 import { SubscriptionDialog } from "@/components/subscription/subscription-dialog";
-import { SubscriptionTier, tierLimits, AccessLevel } from "@shared/schema";
+import { SubscriptionTier, tierLimits, AccessLevel } from "@/shared/schema";
 
 interface UserProfileSheetProps {
   children?: React.ReactNode;

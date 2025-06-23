@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, CheckCircle, AlertCircle } from "lucide-react";
-import { type System, type User } from "@shared/schema";
+import { type System, type User } from "@/shared/schema";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { formatDistanceToNow } from 'date-fns';
 import { MoreHorizontal, RefreshCw } from 'lucide-react';

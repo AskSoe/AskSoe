@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MessageSquare,
   Settings,
@@ -14,11 +14,11 @@ import { Avatar } from "@/components/ui/avatar";
 import { ConnectionItem } from "@/components/system/connection-item";
 import { ConnectDialog } from "@/components/system/connect-dialog";
 import { formatDistanceToNow } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiRequest } from "@/lib/queryClient";
-import { type Conversation, type LlmProvider, type System } from "@shared/schema";
+import { type Conversation, type LlmProvider, type System } from "@/shared/schema";
 
 interface SidebarProps {
   isOpen: boolean;

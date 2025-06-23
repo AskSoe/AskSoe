@@ -1,3 +1,12 @@
+import { WebSocketMessageType, AssistantTypingPayload } from "@/types/websocket";
+
+// Add NodeJS types for browser environment
+declare global {
+  namespace NodeJS {
+    interface Timeout {}
+  }
+}
+
 // WebSocket client for real-time updates
 // This creates a singleton WebSocket connection that can be shared across components
 

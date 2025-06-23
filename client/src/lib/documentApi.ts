@@ -1,5 +1,5 @@
 import { apiRequest } from "./queryClient";
-import { type Document, type DocumentUploadRequest } from "../../shared/schema";
+import { type Document, type DocumentUploadRequest } from "@/shared/schema";
 
 /**
  * Fetch all documents

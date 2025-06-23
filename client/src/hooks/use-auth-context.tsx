@@ -4,7 +4,7 @@ import {
   type AccessLevelType,
   type SubscriptionTierType,
   type User
-} from "@shared/schema";
+} from "@/shared/schema";
 import { 
   getAccessLevel, 
   loginWithCredentials, 

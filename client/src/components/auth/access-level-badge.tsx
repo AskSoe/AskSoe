@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Shield, User, Crown } from "lucide-react";
-import { AccessLevel, type AccessLevelType } from "@shared/schema";
+import { AccessLevel, type AccessLevelType } from "@/shared/schema";
 
 interface AccessLevelBadgeProps {
   accessLevel: AccessLevelType;

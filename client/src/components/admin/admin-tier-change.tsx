@@ -15,7 +15,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle } from 'lucide-react';
-import { type User, type SubscriptionTierType, type AccessLevelType, SubscriptionTier, AccessLevel } from "@shared/schema";
+import { type User, type SubscriptionTierType, type AccessLevelType, SubscriptionTier, AccessLevel } from "@/shared/schema";
 
 interface AdminTierChangeDialogProps {
   user: User;

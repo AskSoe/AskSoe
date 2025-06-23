@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { initSalesforceOAuth } from "@/lib/authApi";
 import { Database, ExternalLink } from "lucide-react";
-import { AccessLevel, type AccessLevelType } from "@shared/schema";
+import { AccessLevel, type AccessLevelType } from "@/shared/schema";
 
 interface SalesforceConnectButtonProps {
   className?: string;

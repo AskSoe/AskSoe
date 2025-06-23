@@ -22,7 +22,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { AdminTierChangeDialog } from './admin-tier-change';
-import { type User as UserType, type SubscriptionTierType, SubscriptionTier } from "@shared/schema";
+import { type User as UserType, type SubscriptionTierType, SubscriptionTier } from "@/shared/schema";
 
 // Define a type for the user data with admin context
 interface AdminUser extends UserType {

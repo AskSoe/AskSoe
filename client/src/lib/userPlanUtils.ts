@@ -1,4 +1,4 @@
-import { type SubscriptionTierType, SubscriptionTier, tierLimits, AccessLevel } from '../../shared/schema';
+import { type SubscriptionTierType, SubscriptionTier, tierLimits, AccessLevel } from '@/shared/schema';
 
 export interface UserPlanInfo {
   tier: SubscriptionTierType;
@@ -36,6 +36,13 @@ const planDisplayInfo = {
     badge: {
       label: 'Enterprise',
       color: 'bg-purple-600',
+    },
+  },
+  [SubscriptionTier.STAFF_ADMIN]: {
+    displayName: 'Staff Admin',
+    badge: {
+      label: 'Staff Admin',
+      color: 'bg-green-600',
     },
   },
 };
