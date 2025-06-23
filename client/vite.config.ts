@@ -36,6 +36,10 @@ export default defineConfig({
     },
     // Ensure proper chunking
     chunkSizeWarningLimit: 1000,
+    // Ensure CSS is properly extracted
+    cssCodeSplit: true,
+    // Ensure assets are properly handled
+    assetsInlineLimit: 4096,
   },
   esbuild: {
     // Suppress TypeScript errors during build
@@ -51,5 +55,9 @@ export default defineConfig({
   // Ensure proper module resolution
   ssr: {
     noExternal: ['@/shared/schema']
+  },
+  // Ensure CSS is properly processed
+  css: {
+    postcss: './postcss.config.js',
   }
 })

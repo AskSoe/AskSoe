@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -47,25 +47,27 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
     loginWithGitHub
   } = useAuth();
   
-  // Handle login form input changes
-  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle login form input changes with useCallback to prevent re-renders
+  const handleLoginChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setLoginForm({
-      ...loginForm,
-      [id === 'email' ? 'username' : id]: value // Map email field to username
-    });
+    setLoginForm(prev => ({
+      ...prev,
+      [id === 'email' ? 'username' : id]: value
+    }));
     
     // Clear any existing error for this field
-    if (formErrors[id]) {
-      setFormErrors({
-        ...formErrors,
-        [id]: ''
-      });
-    }
-  };
+    setFormErrors(prev => {
+      if (prev[id]) {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      }
+      return prev;
+    });
+  }, []);
   
-  // Handle signup form input changes
-  const handleSignupChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle signup form input changes with useCallback
+  const handleSignupChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     
     // Handle name field (split into firstName and lastName)
@@ -74,28 +76,30 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       
-      setSignupForm({
-        ...signupForm,
+      setSignupForm(prev => ({
+        ...prev,
         firstName,
         lastName
-      });
+      }));
     } else {
-      setSignupForm({
-        ...signupForm,
+      setSignupForm(prev => ({
+        ...prev,
         [id === 'signup-email' ? 'email' : 
          id === 'signup-password' ? 'password' : 
          id === 'confirm-password' ? 'confirmPassword' : id]: value
-      });
+      }));
     }
     
     // Clear any existing error for this field
-    if (formErrors[id]) {
-      setFormErrors({
-        ...formErrors,
-        [id]: ''
-      });
-    }
-  };
+    setFormErrors(prev => {
+      if (prev[id]) {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      }
+      return prev;
+    });
+  }, []);
   
   // Validate login form
   const validateLoginForm = (): boolean => {

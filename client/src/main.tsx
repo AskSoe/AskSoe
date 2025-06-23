@@ -3,8 +3,12 @@ import { ChatProvider } from "./hooks/use-chat";
 import App from "./App";
 import "./index.css";
 
-createRoot(document.getElementById("root")!).render(
-  <ChatProvider>
-    <App />
-  </ChatProvider>
-);
+// Ensure CSS is loaded before rendering
+const root = document.getElementById("root");
+if (root) {
+  createRoot(root).render(
+    <ChatProvider>
+      <App />
+    </ChatProvider>
+  );
+}

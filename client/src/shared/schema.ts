@@ -209,7 +209,7 @@ export type LlmProviderRequest = z.infer<typeof llmProviderRequestSchema>;
 
 // Chart and visualization types
 export interface ChartData {
-  type: string;
+  type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea';
   title: string;
   source?: string;
   labels: string[];
@@ -226,8 +226,10 @@ export interface TableData {
     key: string;
     label: string;
     sortable?: boolean;
+    align?: 'left' | 'center' | 'right';
   }>;
   rows: Array<Record<string, any>>;
+  source?: string;
 }
 
 // Utility functions for frontend
