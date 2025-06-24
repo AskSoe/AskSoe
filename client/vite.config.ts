@@ -2,20 +2,36 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import path from 'path'
+import fs from 'fs'
 
 // Detect if we're running in Railway (build from root) or Vercel (build from client directory)
 const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID || process.cwd().includes('railway');
+
+// Determine the correct path for @shared alias
+const getSharedPath = () => {
+  const railwayPath = path.resolve(__dirname, '../../shared');
+  const vercelPath = path.resolve(__dirname, './src/shared');
+  
+  // Check if Railway path exists (when building from root)
+  if (isRailway && fs.existsSync(railwayPath)) {
+    return railwayPath;
+  }
+  
+  // Check if Vercel path exists (when building from client directory)
+  if (fs.existsSync(vercelPath)) {
+    return vercelPath;
+  }
+  
+  // Fallback to Railway path if neither exists (for Railway builds)
+  return railwayPath;
+};
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // Railway: @shared points to ../../shared (from client directory)
-      // Vercel: @shared points to ./src/shared (from client directory)
-      '@shared': isRailway 
-        ? path.resolve(__dirname, '../../shared')
-        : path.resolve(__dirname, './src/shared'),
+      '@shared': getSharedPath(),
     },
   },
   server: {
