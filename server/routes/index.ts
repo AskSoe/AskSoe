@@ -37,11 +37,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Health check endpoint for Railway
   apiRouter.get("/health", (req, res) => {
+    console.log("Health check requested at:", new Date().toISOString());
     res.status(200).json({
       status: "healthy",
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      environment: process.env.NODE_ENV || "development"
+      environment: process.env.NODE_ENV || "development",
+      version: "1.0.0" // Added version for debugging
     });
   });
 
