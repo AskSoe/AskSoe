@@ -35,6 +35,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   apiRouter.use("/admin", adminRouter);
   apiRouter.use("/salesforce", salesforceAuth);
 
+  // Health check endpoint for Railway
+  apiRouter.get("/health", (req, res) => {
+    res.status(200).json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || "development"
+    });
+  });
+
   // Mount API router
   app.use("/api", apiRouter);
 
