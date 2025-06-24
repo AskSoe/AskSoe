@@ -10,4 +10,11 @@ restartPolicyType = "on_failure"
 
 [deploy.envs]
 NODE_ENV = "production"
-RAILWAY_ENVIRONMENT = "true" 
+RAILWAY_ENVIRONMENT = "true"
+SESSION_SECRET = "railway-session-secret-key-change-in-production"
+JWT_SECRET = "railway-jwt-secret-key-change-in-production"
+# Optional: Add these if you have them configured
+# OPENAI_API_KEY = ""
+# STRIPE_SECRET_KEY = ""
+# SALESFORCE_CLIENT_ID = ""
+# SALESFORCE_CLIENT_SECRET = "" 
