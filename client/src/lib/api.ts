@@ -1,10 +1,12 @@
 import { apiRequest } from "@/lib/queryClient";
 import { 
-  type Conversation, 
-  type Message, 
+  type User, 
   type System, 
-  type LlmProvider 
-} from "@/shared/schema";
+  type Conversation, 
+  type Message,
+  type Document,
+  type LlmProvider
+} from "@shared/schema";
 
 /**
  * API utility functions for interacting with the backend services

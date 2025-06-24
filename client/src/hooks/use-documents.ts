@@ -10,7 +10,7 @@ import {
   updateDocument,
   deleteDocument
 } from "@/lib/documentApi";
-import { type Document, type DocumentUploadRequest } from "../shared/schema";
+import { type Document, type DocumentUploadRequest } from "@shared/schema";
 
 /**
  * Hook to fetch all documents

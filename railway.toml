@@ -1,5 +1,6 @@
 [build]
 builder = "nixpacks"
+buildCommand = "npm run build:railway"
 
 [deploy]
 startCommand = "npm run start"
@@ -8,4 +9,5 @@ healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 
 [deploy.envs]
-NODE_ENV = "production" 
+NODE_ENV = "production"
+RAILWAY_ENVIRONMENT = "true" 

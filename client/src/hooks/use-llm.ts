@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "./use-toast";
-import { type LlmProvider } from "@/shared/schema";
+import { type LlmProvider } from "@shared/schema";
 import { 
   fetchLlmProviders, 
   fetchActiveLlmProvider, 

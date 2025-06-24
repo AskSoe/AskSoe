@@ -18,7 +18,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiRequest } from "@/lib/queryClient";
-import { type Conversation, type LlmProvider, type System } from "@/shared/schema";
+import { type Conversation, type LlmProvider, type System } from "@shared/schema";
 
 interface SidebarProps {
   isOpen: boolean;

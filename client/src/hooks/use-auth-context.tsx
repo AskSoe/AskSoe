@@ -1,10 +1,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { 
   AccessLevel, 
+  SubscriptionTier, 
   type AccessLevelType,
   type SubscriptionTierType,
   type User
-} from "@/shared/schema";
+} from "@shared/schema";
 import { 
   getAccessLevel, 
   loginWithCredentials, 

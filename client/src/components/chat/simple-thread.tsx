@@ -3,7 +3,7 @@ import { UserMessage, AssistantMessage } from "@/components/chat/message";
 import { TypingIndicator } from "@/components/chat/typing-indicator";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
-import { type Message } from '@/shared/schema';
+import { type Message } from '@shared/schema';
 
 interface SimpleThreadProps {
   conversationId?: number;

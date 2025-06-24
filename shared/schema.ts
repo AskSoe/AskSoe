@@ -19,6 +19,27 @@ export const SubscriptionTier = {
 
 export type SubscriptionTierType = typeof SubscriptionTier[keyof typeof SubscriptionTier];
 
+// Auth provider enum
+export const AuthProvider = {
+  LOCAL: "local",
+  SALESFORCE: "salesforce",
+  GOOGLE: "google",
+  MICROSOFT: "microsoft",
+} as const;
+
+export type AuthProviderType = typeof AuthProvider[keyof typeof AuthProvider];
+
+// Document type enum
+export const DocumentType = {
+  PDF: "pdf",
+  DOCX: "docx",
+  TXT: "txt",
+  CSV: "csv",
+  XLSX: "xlsx",
+} as const;
+
+export type DocumentTypeType = typeof DocumentType[keyof typeof DocumentType];
+
 // Subscription tier details
 export const tierLimits = {
   [SubscriptionTier.FREE]: {
@@ -30,189 +51,29 @@ export const tierLimits = {
   },
   [SubscriptionTier.PRO]: {
     maxSystems: 5,
-    canWrite: false,
-    description: "Connect up to 5 systems with read-only access.",
-    price: 19.99,
-    maxQueries: -1 // unlimited
+    canWrite: true,
+    description: "Connect to multiple systems with full access.",
+    price: 29,
+    maxQueries: 1000
   },
   [SubscriptionTier.ENTERPRISE]: {
-    maxSystems: 10,
+    maxSystems: 20,
     canWrite: true,
-    description: "Connect up to 10 systems with read and write capabilities.",
-    price: 49.99,
-    maxQueries: -1 // unlimited
+    description: "Enterprise-grade access with priority support.",
+    price: 99,
+    maxQueries: 10000
   },
   [SubscriptionTier.STAFF_ADMIN]: {
-    maxSystems: -1, // unlimited
+    maxSystems: 50,
     canWrite: true,
-    description: "Full administrative access with unlimited system connections.",
+    description: "Staff and admin access with unlimited queries.",
     price: 0,
-    maxQueries: -1 // unlimited
-  }
-};
-
-// Authentication provider enum
-export const AuthProvider = {
-  LOCAL: "local",
-  GOOGLE: "google",
-  APPLE: "apple",
-  SALESFORCE: "salesforce",
+    maxQueries: -1
+  },
 } as const;
 
-export type AuthProviderType = typeof AuthProvider[keyof typeof AuthProvider];
-
-// Document types enum
-export const DocumentType = {
-  PDF: "pdf",
-  TEXT: "text",
-  CSV: "csv",
-  JSON: "json",
-  DOCX: "docx",
-  XLSX: "xlsx",
-} as const;
-
-export type DocumentTypeType = typeof DocumentType[keyof typeof DocumentType];
-
-// Define LLM settings type
-export const llmSettingsSchema = z.object({
-  model: z.string().optional(),
-  temperature: z.number().min(0).max(2).optional(),
-  maxTokens: z.number().positive().optional(),
-  topP: z.number().min(0).max(1).optional(),
-});
-
-export type LlmSettings = z.infer<typeof llmSettingsSchema>;
-
-// Message content schema for API
-export const messageContentSchema = z.object({
-  type: z.enum(["text", "chart", "table", "image", "processing"]),
-  content: z.any(), // Content specific to the type
-  sources: z.array(z.string()).optional(),
-});
-
-export type MessageContent = z.infer<typeof messageContentSchema>;
-
-// Chart data schemas
-export const chartDataSchema = z.object({
-  type: z.enum(["bar", "line", "pie", "scatter"]),
-  title: z.string(),
-  labels: z.array(z.string()),
-  datasets: z.array(z.object({
-    label: z.string(),
-    data: z.array(z.number()),
-    backgroundColor: z.array(z.string()).optional(),
-    borderColor: z.string().optional(),
-  })),
-  source: z.string().optional(),
-});
-
-export type ChartData = z.infer<typeof chartDataSchema>;
-
-// Table data schema
-export const tableDataSchema = z.object({
-  headers: z.array(z.object({
-    key: z.string(),
-    label: z.string(),
-    align: z.enum(["left", "center", "right"]).optional(),
-  })),
-  rows: z.array(z.record(z.string(), z.any())),
-  source: z.string().optional(),
-});
-
-export type TableData = z.infer<typeof tableDataSchema>;
-
-// Request schemas
-export const messageRequestSchema = z.object({
-  content: z.string(),
-  conversationId: z.number().nullable().optional(),
-});
-
-export type MessageRequest = z.infer<typeof messageRequestSchema>;
-
-export const systemConnectionRequestSchema = z.object({
-  name: z.string(),
-  type: z.string(),
-  connectionDetails: z.record(z.string(), z.any()),
-});
-
-export type SystemConnectionRequest = z.infer<typeof systemConnectionRequestSchema>;
-
-export const llmProviderRequestSchema = z.object({
-  name: z.string(),
-  type: z.string(),
-  apiKey: z.string().optional(),
-  settings: z.record(z.string(), z.any()).optional(),
-  isActive: z.boolean().optional(),
-});
-
-export type LlmProviderRequest = z.infer<typeof llmProviderRequestSchema>;
-
-// OAuth related schemas
-export const salesforceOAuthInitSchema = z.object({
-  accessLevel: z.enum([AccessLevel.READ, AccessLevel.WRITE]),
-});
-
-export type SalesforceOAuthInitRequest = z.infer<typeof salesforceOAuthInitSchema>;
-
-export const oauthCallbackSchema = z.object({
-  code: z.string(),
-  state: z.string().optional(),
-  error: z.string().optional(),
-  error_description: z.string().optional(),
-});
-
-export type OauthCallbackRequest = z.infer<typeof oauthCallbackSchema>;
-
-export const systemWithAccessSchema = z.object({
-  system: z.object({
-    id: z.number(),
-    name: z.string(),
-    type: z.string(),
-    status: z.string(),
-    lastSynced: z.string().nullable(),
-  }),
-  accessLevel: z.enum([AccessLevel.READ, AccessLevel.WRITE]),
-  hasToken: z.boolean(),
-});
-
-export type SystemWithAccess = z.infer<typeof systemWithAccessSchema>;
-
-// Document upload request schema
-export const documentUploadRequestSchema = z.object({
-  name: z.string(),
-  path: z.string(),
-  type: z.string(),
-  size: z.number(),
-  content: z.string().nullable().optional(),
-  metadata: z.any().optional(),
-  userId: z.number().nullable().optional(),
-  conversationId: z.number().nullable().optional(),
-  status: z.string().nullable().optional(),
-});
-
-export type DocumentUploadRequest = z.infer<typeof documentUploadRequestSchema>;
-
-// Document analysis result schema
-export const documentAnalysisSchema = z.object({
-  documentId: z.number(),
-  summary: z.string().optional(),
-  keyPoints: z.array(z.string()).optional(),
-  entities: z.array(z.object({
-    name: z.string(),
-    type: z.string(),
-    confidence: z.number().optional(),
-  })).optional(),
-  sentiment: z.object({
-    score: z.number(),
-    label: z.string(),
-  }).optional(),
-  metadata: z.record(z.string(), z.any()).optional(),
-});
-
-export type DocumentAnalysis = z.infer<typeof documentAnalysisSchema>;
-
-// Frontend-safe type definitions (these will be imported from server/schema.ts in backend)
-export type User = {
+// Frontend-safe type definitions (without Drizzle dependencies)
+export interface User {
   id: number;
   username: string;
   email: string;
@@ -230,9 +91,9 @@ export type User = {
   queryCount: number;
   createdAt: string;
   lastLoginAt?: string;
-};
+}
 
-export type System = {
+export interface System {
   id: number;
   name: string;
   type: string;
@@ -240,45 +101,155 @@ export type System = {
   status: string;
   lastSynced?: string;
   userId?: number;
-};
+}
 
-export type LlmProvider = {
-  id: number;
-  name: string;
-  type: string;
-  apiKey?: string;
-  settings: Record<string, any>;
-  isActive: boolean;
-};
-
-export type Conversation = {
+export interface Conversation {
   id: number;
   title: string;
   createdAt: string;
   userId?: number;
-};
+}
 
-export type Message = {
+export interface Message {
   id: number;
   conversationId: number;
   content: string;
-  role: string;
+  role: "user" | "assistant";
   timestamp: string;
-  systemSources: any[];
-  visualizations: any[];
-};
+  systemSources?: any[];
+  visualizations?: any[];
+}
 
-export type Document = {
+export interface Document {
   id: number;
   name: string;
-  type: string;
+  type: DocumentTypeType;
   size: number;
   path: string;
   content?: string;
-  metadata: Record<string, any>;
+  metadata?: Record<string, any>;
   userId?: number;
   conversationId?: number;
   createdAt: string;
   analyzedAt?: string;
-  status: string;
-};
+  status: "pending" | "processing" | "completed" | "error";
+}
+
+export interface LlmProvider {
+  id: number;
+  name: string;
+  type: string;
+  settings?: Record<string, any>;
+  isActive: boolean;
+}
+
+export interface OauthToken {
+  id: number;
+  userId: number;
+  provider: string;
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: string;
+  scopes?: string[];
+  tokenData?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Request/Response schemas for API calls
+export const userLoginSchema = z.object({
+  username: z.string().min(1),
+  password: z.string().min(1),
+});
+
+export const userRegisterSchema = z.object({
+  username: z.string().min(3),
+  email: z.string().email(),
+  password: z.string().min(6),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
+export const messageRequestSchema = z.object({
+  conversationId: z.number(),
+  content: z.string().min(1),
+  systemIds: z.array(z.number()).optional(),
+});
+
+export const systemConnectionRequestSchema = z.object({
+  name: z.string().min(1),
+  type: z.string().min(1),
+  connectionDetails: z.record(z.any()),
+});
+
+export const documentUploadRequestSchema = z.object({
+  name: z.string().min(1),
+  type: z.string().min(1),
+  size: z.number().positive(),
+  content: z.string().optional(),
+  metadata: z.record(z.any()).optional(),
+  conversationId: z.number().optional(),
+});
+
+export const llmProviderRequestSchema = z.object({
+  name: z.string().min(1),
+  type: z.string().min(1),
+  apiKey: z.string().optional(),
+  settings: z.record(z.any()).optional(),
+  isActive: z.boolean().optional(),
+});
+
+// Type exports for request/response schemas
+export type UserLoginRequest = z.infer<typeof userLoginSchema>;
+export type UserRegisterRequest = z.infer<typeof userRegisterSchema>;
+export type MessageRequest = z.infer<typeof messageRequestSchema>;
+export type SystemConnectionRequest = z.infer<typeof systemConnectionRequestSchema>;
+export type DocumentUploadRequest = z.infer<typeof documentUploadRequestSchema>;
+export type LlmProviderRequest = z.infer<typeof llmProviderRequestSchema>;
+
+// Chart and visualization types
+export interface ChartData {
+  type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea';
+  title: string;
+  source?: string;
+  labels: string[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    backgroundColor?: string;
+    borderColor?: string;
+  }>;
+}
+
+export interface TableData {
+  headers: Array<{
+    key: string;
+    label: string;
+    sortable?: boolean;
+    align?: 'left' | 'center' | 'right';
+  }>;
+  rows: Array<Record<string, any>>;
+  source?: string;
+}
+
+// Utility functions for frontend
+export function getUserPlan(tier: SubscriptionTierType) {
+  return tierLimits[tier];
+}
+
+export function canPerformWrite(accessLevel: AccessLevelType): boolean {
+  return accessLevel === AccessLevel.WRITE || accessLevel === AccessLevel.ADMIN;
+}
+
+export function getAccessLevel(accessLevel: AccessLevelType): string {
+  switch (accessLevel) {
+    case AccessLevel.READ:
+      return "Read Only";
+    case AccessLevel.WRITE:
+      return "Read & Write";
+    case AccessLevel.ADMIN:
+      return "Admin";
+    default:
+      return "Unknown";
+  }
+}

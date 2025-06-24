@@ -18,7 +18,7 @@ import { DocumentUploadDialog } from "@/components/document";
 import { useConversationDocuments } from "@/hooks/use-documents";
 import { useAuth } from "@/hooks/use-auth-context";
 import { useAuthDialogProvider } from "@/components/auth/auth-provider";
-import { type Document } from '@/shared/schema';
+import { type Document } from '@shared/schema';
 
 interface ChatInputProps {
   conversationId?: number;

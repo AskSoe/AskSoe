@@ -1,4 +1,4 @@
-import { type SubscriptionTierType, SubscriptionTier, tierLimits, AccessLevel } from '@/shared/schema';
+import { type SubscriptionTierType, SubscriptionTier, tierLimits, AccessLevel } from '@shared/schema';
 
 export interface UserPlanInfo {
   tier: SubscriptionTierType;

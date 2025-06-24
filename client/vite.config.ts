@@ -3,12 +3,19 @@ import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import path from 'path'
 
+// Detect if we're running in Railway (build from root) or Vercel (build from client directory)
+const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID || process.cwd().includes('railway');
+
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@shared': path.resolve(__dirname, './src/shared'),
+      // Railway: @shared points to ../../shared (from client directory)
+      // Vercel: @shared points to ./src/shared (from client directory)
+      '@shared': isRailway 
+        ? path.resolve(__dirname, '../../shared')
+        : path.resolve(__dirname, './src/shared'),
     },
   },
   server: {
@@ -30,33 +37,26 @@ export default defineConfig({
         warn(warning);
       },
     },
-    // Ensure proper module resolution during build
     commonjsOptions: {
       include: [/node_modules/],
     },
-    // Ensure proper chunking
     chunkSizeWarningLimit: 1000,
-    // Ensure CSS is properly extracted
     cssCodeSplit: true,
-    // Ensure assets are properly handled
     assetsInlineLimit: 4096,
   },
   esbuild: {
-    // Suppress TypeScript errors during build
     logOverride: { 'this-is-undefined-in-esm': 'silent' }
   },
   optimizeDeps: {
-    include: ['@/shared/schema', 'react', 'react-dom']
+    include: ['react', 'react-dom']
   },
-  // Ensure proper TypeScript handling
   define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+    'process.env.RAILWAY_ENVIRONMENT': JSON.stringify(process.env.RAILWAY_ENVIRONMENT || ''),
   },
-  // Ensure proper module resolution
   ssr: {
-    noExternal: ['@/shared/schema']
+    noExternal: []
   },
-  // Ensure CSS is properly processed
   css: {
     postcss: './postcss.config.js',
   }

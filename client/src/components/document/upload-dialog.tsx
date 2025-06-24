@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth-context";
 import { useAuthDialogProvider } from "@/components/auth/auth-provider";
-import { type Document } from '@/shared/schema';
+import { type Document } from '@shared/schema';
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";

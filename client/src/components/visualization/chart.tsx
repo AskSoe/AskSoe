@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DatabaseIcon, MaximizeIcon } from 'lucide-react';
 import Chart from 'chart.js/auto';
-import { type ChartData } from '@/shared/schema';
+import { type ChartData } from '@shared/schema';
 
 interface ChartComponentProps {
   data: ChartData;

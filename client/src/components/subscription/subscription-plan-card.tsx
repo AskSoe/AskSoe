@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, X } from 'lucide-react';
 import { canAccessFeature, formatPrice, getUserPlan } from '@/lib/userPlanUtils';
-import { SubscriptionTier, type SubscriptionTierType } from "@/shared/schema";
+import { SubscriptionTier, type SubscriptionTierType } from "@shared/schema";
 
 interface SubscriptionPlanCardProps {
   tier: SubscriptionTierType;

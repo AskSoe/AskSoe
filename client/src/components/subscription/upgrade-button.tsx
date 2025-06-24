@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Zap } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth-context';
 import { getUserPlan } from '@/lib/userPlanUtils';
-import { SubscriptionTier, type SubscriptionTierType } from "@/shared/schema";
+import { SubscriptionTier, type SubscriptionTierType } from "@shared/schema";
 import { useAuthDialogProvider } from "@/components/auth/auth-provider";
 
 interface UpgradeButtonProps {

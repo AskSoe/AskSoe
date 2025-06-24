@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Check, Crown, Zap } from 'lucide-react';
 import { Link } from 'wouter';
-import { SubscriptionTier, type SubscriptionTierType } from '@/shared/schema';
+import { SubscriptionTier, type SubscriptionTierType } from '@shared/schema';
 
 export default function SubscriptionPlans() {
   const { toast } = useToast();

@@ -5,7 +5,7 @@ import { TypingIndicator } from "./typing-indicator";
 import { DatabaseIcon, GlobeIcon, WrenchIcon } from "lucide-react";
 import { webSocketClient } from "@/lib/websocket";
 import { motion, AnimatePresence } from "framer-motion";
-import { type Message } from '@/shared/schema';
+import { type Message } from '@shared/schema';
 
 interface BasicThreadProps {
   conversationId?: number;
