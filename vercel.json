@@ -1,6 +1,7 @@
 {
-  "buildCommand": "npm run build:client",
-  "outputDirectory": "client/dist",
+  "rootDirectory": "client",
+  "buildCommand": "cp ../shared/schema.ts ./src/shared/ && npm run build",
+  "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": "vite",
   "rewrites": [
