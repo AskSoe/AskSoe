@@ -12,11 +12,13 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/passport-oauth2": "^1.4.17",
+    "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "connect-pg-simple": "^10.0.0",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.39.1",
     "drizzle-zod": "^0.7.0",
+    "esbuild": "^0.25.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
@@ -31,8 +33,7 @@
     "stripe": "^17.7.0",
     "ws": "^8.18.0",
     "zod": "^3.23.8",
-    "zod-validation-error": "^3.4.0",
-    "esbuild": "^0.25.0"
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@types/connect-pg-simple": "^7.0.3",
@@ -49,4 +50,4 @@
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
   }
-} 
+}
