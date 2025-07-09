@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite, log } from "./vite";
+import path from "path";
 
 const app = express();
 // Make Express app available globally for adapters 
@@ -9,7 +10,6 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static("public"));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -43,6 +43,7 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  console.log("API routes registered");
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -52,13 +53,22 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Serve static files only for non-API routes
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    express.static(path.resolve(__dirname, '../client/dist'))(req, res, next);
+  });
+
+  // Fallback: send index.html for all non-API, non-static requests (for SPA routing)
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
+  });
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
-  } else {
-    serveStatic(app);
   }
 
   // Use environment PORT for Railway deployment
