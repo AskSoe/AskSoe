@@ -9,7 +9,10 @@ import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
 export async function setupVite(app: Express, server: Server) {
-  const { createServer: createViteServer, createLogger } = await import("vite");
+  // Use eval to avoid esbuild static analysis and bundling
+  const viteModule = eval('require("vite")');
+  const createViteServer = viteModule.createServer;
+  const createLogger = viteModule.createLogger;
   const viteLogger = createLogger();
 
   const serverOptions = {
