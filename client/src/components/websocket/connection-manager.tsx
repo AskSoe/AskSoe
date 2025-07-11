@@ -30,13 +30,7 @@ export function WebSocketConnectionManager() {
     
     // Handle connection closed
     const handleConnectionClosed = (data: any) => {
-      if (data.code !== 1000) { // Not a normal closure
-        toast({
-          title: "Connection Lost",
-          description: "Connection to AI Hub was interrupted. Attempting to reconnect...",
-          variant: "destructive",
-        });
-      }
+      // Do nothing (removed toast for connection lost)
     };
     
     // Register event handlers
