@@ -6,6 +6,7 @@ import {
   messages, type Message, type InsertMessage,
   oauthTokens, type OauthToken, type InsertOauthToken,
   documents, type Document, type InsertDocument,
+  signups, type Signup, type InsertSignup,
 } from "./schema";
 import {
   AccessLevel, SubscriptionTier,
@@ -81,6 +82,10 @@ export interface IStorage {
   updateDocumentStatus(id: number, status: string): Promise<Document | undefined>;
   updateDocumentContent(id: number, content: string): Promise<Document | undefined>;
   updateDocumentMetadata(id: number, metadata: any): Promise<Document | undefined>;
+
+  // Signup methods
+  createSignup(signup: InsertSignup): Promise<Signup>;
+  getSignups(): Promise<Signup[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -91,6 +96,7 @@ export class MemStorage implements IStorage {
   private messages: Map<number, Message>;
   private oauthTokens: Map<number, OauthToken>;
   private documents: Map<number, Document>;
+  private signups: Map<number, Signup>;
   
   private userId: number;
   private systemId: number;
@@ -99,6 +105,7 @@ export class MemStorage implements IStorage {
   private messageId: number;
   private oauthTokenId: number;
   private documentId: number;
+  private signupId: number;
 
   constructor() {
     this.users = new Map();
@@ -108,6 +115,7 @@ export class MemStorage implements IStorage {
     this.messages = new Map();
     this.oauthTokens = new Map();
     this.documents = new Map();
+    this.signups = new Map();
     
     this.userId = 1;
     this.systemId = 1;
@@ -116,6 +124,7 @@ export class MemStorage implements IStorage {
     this.messageId = 1;
     this.oauthTokenId = 1;
     this.documentId = 1;
+    this.signupId = 1;
     
     // Add default systems - we'll handle this synchronously for simplicity
     this.initializeDefaultDataSync();
@@ -152,7 +161,8 @@ export class MemStorage implements IStorage {
         apiUrl: "https://api.salesforce.com",
         apiVersion: "v56.0"
       },
-      status: "connected"
+      status: "connected",
+      userId: null,
     });
     
     this.createSystem({
@@ -162,7 +172,8 @@ export class MemStorage implements IStorage {
         apiUrl: "https://api.sap.com",
         apiVersion: "v2"
       },
-      status: "connected"
+      status: "connected",
+      userId: null,
     });
     
     this.createSystem({
@@ -172,7 +183,8 @@ export class MemStorage implements IStorage {
         apiUrl: "https://api.tableau.com",
         apiVersion: "v1"
       },
-      status: "limited"
+      status: "limited",
+      userId: null,
     });
     
     // Create default LLM Providers
@@ -515,7 +527,8 @@ export class MemStorage implements IStorage {
       type: insertSystem.type,
       connectionDetails: insertSystem.connectionDetails,
       status: insertSystem.status || "connected",
-      lastSynced: new Date()
+      lastSynced: new Date(),
+      userId: userId || null,
     };
     
     this.systems.set(id, system);
@@ -819,6 +832,27 @@ export class MemStorage implements IStorage {
     };
     this.documents.set(id, updatedDocument);
     return updatedDocument;
+  }
+
+  // Signup Methods
+
+  async createSignup(signup: InsertSignup): Promise<Signup> {
+    const id = this.signupId++;
+    const newSignup: Signup = {
+      id,
+      name: signup.name,
+      jobTitle: signup.jobTitle ?? null,
+      email: signup.email,
+      systemsUsed: signup.systemsUsed ?? '',
+      phone: signup.phone ?? null,
+      createdAt: new Date(),
+    };
+    this.signups.set(id, newSignup);
+    return newSignup;
+  }
+
+  async getSignups(): Promise<Signup[]> {
+    return Array.from(this.signups.values());
   }
 
   async getAllUsers(): Promise<User[]> {

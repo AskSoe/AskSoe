@@ -190,3 +190,25 @@ export const insertDocumentSchema = createInsertSchema(documents).pick({
 
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type Document = typeof documents.$inferSelect; 
+
+// Signups table for landing page form
+export const signups = pgTable("signups", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  jobTitle: text("job_title"),
+  email: text("email").notNull(),
+  systemsUsed: text("systems_used"),
+  phone: text("phone"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertSignupSchema = createInsertSchema(signups).pick({
+  name: true,
+  jobTitle: true,
+  email: true,
+  systemsUsed: true,
+  phone: true,
+});
+
+export type Signup = typeof signups.$inferSelect;
+export type InsertSignup = typeof signups.$inferInsert; 
