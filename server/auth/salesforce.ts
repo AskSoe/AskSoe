@@ -7,9 +7,24 @@ import axios from 'axios';
 
 // Salesforce OAuth configuration
 // These must be set in environment variables
-const SALESFORCE_CLIENT_ID = process.env.SALESFORCE_CLIENT_ID;
-const SALESFORCE_CLIENT_SECRET = process.env.SALESFORCE_CLIENT_SECRET;
+const isProduction = process.env.NODE_ENV === "production";
+
+let SALESFORCE_CLIENT_ID = process.env.SALESFORCE_CLIENT_ID;
+let SALESFORCE_CLIENT_SECRET = process.env.SALESFORCE_CLIENT_SECRET;
 const SALESFORCE_CALLBACK_URL = process.env.SALESFORCE_CALLBACK_URL || 'http://localhost:3001/auth/salesforce/callback';
+
+if (!SALESFORCE_CLIENT_ID || !SALESFORCE_CLIENT_SECRET) {
+  if (isProduction) {
+    throw new Error("Missing Salesforce credentials in production!");
+  } else {
+    console.warn("\u26A0\uFE0F Using dummy Salesforce credentials for dev/testing.");
+    SALESFORCE_CLIENT_ID = "placeholder";
+    SALESFORCE_CLIENT_SECRET = "placeholder";
+  }
+}
+
+export const salesforceClientId = SALESFORCE_CLIENT_ID;
+export const salesforceClientSecret = SALESFORCE_CLIENT_SECRET;
 
 // Validate required environment variables
 if (!SALESFORCE_CLIENT_ID || !SALESFORCE_CLIENT_SECRET) {
