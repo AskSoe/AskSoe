@@ -82,12 +82,12 @@ export default function LandingPage() {
           <p className="text-lg md:text-2xl text-cream-200 text-center max-w-2xl mb-8">
             SOE connects your business tools — like Salesforce, Slack, Notion, and more — into one intelligent assistant.
           </p>
-          <a href="#waitlist" className="bg-cream-100 text-blue-900 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-cream-200 transition text-lg mb-8">Join the Waitlist</a>
+          <a href="#waitlist" className="bg-cream-100 text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-cream-200 hover:text-blue-900 transition text-lg mb-8">Join the Waitlist</a>
           {/* Logos/graphic */}
           <div className="flex flex-wrap gap-6 items-center justify-center mb-8">
             {SYSTEMS.map((sys) => (
-              <div key={sys.name} className="bg-white/80 rounded-full p-3 shadow flex items-center justify-center">
-                {sys.icon}
+              <div key={sys.name} className="bg-white rounded-full p-5 shadow-xl border-4 border-blue-200 flex items-center justify-center transition-transform duration-200 hover:scale-110">
+                {React.cloneElement(sys.icon, { size: 40 })}
               </div>
             ))}
           </div>
