@@ -19,8 +19,8 @@ import {
   type LlmProvider,
   type Document,
   type SubscriptionTierType,
-  insertSignupSchema
 } from "../shared/schema";
+import { insertSignupSchema } from "./schema";
 
 import { handleMessage, tryDirectMockResponse } from "./adapters/llm";
 import { authRouter, requireWriteAccess } from "./auth/routes";
@@ -49,6 +49,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Create API router
   const apiRouter = express.Router();
+
+  // Health check endpoint for Railway
+  apiRouter.get("/health", (req, res) => {
+    console.log("API health endpoint hit");
+    console.log("Health check requested at:", new Date().toISOString());
+    res.status(200).json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || "development",
+      version: "1.0.0"
+    });
+  });
 
   // Mount admin routes
   apiRouter.use("/admin", adminRouter);
