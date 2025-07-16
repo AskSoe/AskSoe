@@ -31,7 +31,7 @@ export default function LandingPage() {
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch("/api/signups", {
+      const res = await fetch("https://asksoe-production.up.railway.app/api/signups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
