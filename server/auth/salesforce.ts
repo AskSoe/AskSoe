@@ -15,7 +15,9 @@ const SALESFORCE_CALLBACK_URL = process.env.SALESFORCE_CALLBACK_URL || 'http://l
 
 if (!SALESFORCE_CLIENT_ID || !SALESFORCE_CLIENT_SECRET) {
   if (isProduction) {
-    throw new Error("Missing Salesforce credentials in production!");
+    console.warn("Missing Salesforce credentials in production - Salesforce features will be disabled.");
+    SALESFORCE_CLIENT_ID = "placeholder";
+    SALESFORCE_CLIENT_SECRET = "placeholder";
   } else {
     console.warn("\u26A0\uFE0F Using dummy Salesforce credentials for dev/testing.");
     SALESFORCE_CLIENT_ID = "placeholder";
