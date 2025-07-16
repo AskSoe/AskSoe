@@ -183,7 +183,7 @@ export default function LandingPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="bg-cream-100 text-blue-900 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-cream-200 transition text-lg mt-2 disabled:opacity-60"
+              className="bg-cream-100 text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-cream-200 hover:text-blue-900 transition text-lg mt-2 disabled:opacity-60"
             >
               {submitting ? "Joining..." : "Join the Waitlist"}
             </button>
