@@ -48,13 +48,21 @@ function Router() {
 }
 
 function App() {
+  const [location] = useLocation();
+  
+  // Only show WebSocket connection on authenticated/app pages, not on landing page
+  const shouldShowWebSocket = location.startsWith('/app') || 
+                             location.startsWith('/subscription-plans') || 
+                             location.startsWith('/admin') ||
+                             location.startsWith('/test-chat');
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AuthDialogProvider>
           <WebSocketProvider>
             <ChatProvider>
-              <WebSocketConnectionManager />
+              {shouldShowWebSocket && <WebSocketConnectionManager />}
               <Router />
             </ChatProvider>
           </WebSocketProvider>
