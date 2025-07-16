@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { ConnectDialog } from "@/components/system/connect-dialog";
 import { SubscriptionDialog } from "@/components/subscription/subscription-dialog";
 import { SubscriptionTier, tierLimits, AccessLevel } from "@shared/schema";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface UserProfileSheetProps {
   children?: React.ReactNode;
@@ -47,7 +48,8 @@ export function UserProfileSheet({ children }: UserProfileSheetProps) {
     joinDate: "March 2025",
     subscriptionTier: SubscriptionTier.FREE as string, // Cast as string to avoid type errors
     systemsConnected: 1,
-    maxSystems: tierLimits[SubscriptionTier.FREE].maxSystems
+    maxSystems: tierLimits[SubscriptionTier.FREE].maxSystems,
+    avatarUrl: "/images/logo.png" // Placeholder avatar image
   };
   
   // Calculate subscription tier details
@@ -103,8 +105,8 @@ export function UserProfileSheet({ children }: UserProfileSheetProps) {
         <SheetTrigger asChild>
           {children || <Button variant="default">My Account</Button>}
         </SheetTrigger>
-        <SheetContent className="sm:max-w-md p-0" side="right">
-          <div className="h-full flex flex-col">
+        <SheetContent className="sm:max-w-md p-0 flex flex-col h-full min-h-0" side="right">
+          <div className="h-full flex flex-col min-h-0">
             <SheetHeader className="px-6 py-4 border-b">
               <SheetTitle>My Account</SheetTitle>
               <SheetDescription>
@@ -112,7 +114,7 @@ export function UserProfileSheet({ children }: UserProfileSheetProps) {
               </SheetDescription>
             </SheetHeader>
             
-            <Tabs defaultValue="profile" className="flex-1 flex flex-col" value={activeTab} onValueChange={setActiveTab}>
+            <Tabs defaultValue="profile" className="flex-1 flex flex-col min-h-0" value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid grid-cols-3 px-6 pt-4">
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="systems">Systems</TabsTrigger>
@@ -120,12 +122,15 @@ export function UserProfileSheet({ children }: UserProfileSheetProps) {
               </TabsList>
               
               {/* Profile Tab */}
-              <TabsContent value="profile" className="flex-1 px-6 py-4 overflow-auto">
+              <TabsContent value="profile" className="flex-1 px-6 py-4 overflow-auto min-h-0">
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
-                    <div className="bg-primary/10 text-primary rounded-full p-3">
-                      <User className="h-6 w-6" />
-                    </div>
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={userInfo.avatarUrl || "/images/logo.png"} alt={userInfo.username} />
+                      <AvatarFallback>
+                        <User className="h-6 w-6" />
+                      </AvatarFallback>
+                    </Avatar>
                     <div>
                       <h3 className="font-medium text-lg">{userInfo.username}</h3>
                       <p className="text-sm text-muted-foreground">{userInfo.role}</p>
@@ -164,7 +169,7 @@ export function UserProfileSheet({ children }: UserProfileSheetProps) {
               </TabsContent>
               
               {/* Systems Tab */}
-              <TabsContent value="systems" className="flex-1 px-6 py-4 overflow-auto">
+              <TabsContent value="systems" className="flex-1 px-6 py-4 overflow-auto min-h-0">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium">Connected Systems</h3>
@@ -228,7 +233,7 @@ export function UserProfileSheet({ children }: UserProfileSheetProps) {
               </TabsContent>
               
               {/* Subscription Tab */}
-              <TabsContent value="subscription" className="flex-1 p-6 overflow-auto">
+              <TabsContent value="subscription" className="flex-1 p-6 overflow-auto min-h-0">
                 <div className="space-y-6">
                   <div className="flex justify-between items-start">
                     <div>
