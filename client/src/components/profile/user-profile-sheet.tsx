@@ -105,7 +105,7 @@ export function UserProfileSheet({ children }: UserProfileSheetProps) {
         <SheetTrigger asChild>
           {children || <Button variant="default">My Account</Button>}
         </SheetTrigger>
-        <SheetContent className="sm:max-w-md p-0 flex flex-col h-full min-h-0" side="right">
+        <SheetContent className="sm:max-w-md p-0 flex flex-col h-full min-h-0 z-[100] bg-background" side="right">
           <div className="h-full flex flex-col min-h-0">
             <SheetHeader className="px-6 py-4 border-b">
               <SheetTitle>My Account</SheetTitle>
