@@ -63,7 +63,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center flex-1 py-16 px-4 relative overflow-hidden">
         {/* Optional animated background */}
-        <div className="absolute inset-0 pointer-events-none select-none">
+        <div className="absolute inset-0 pointer-events-none select-none z-0">
           <svg className="w-full h-full" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
             <defs>
               <linearGradient id="bgwave" x1="0" y1="0" x2="0" y2="1">
@@ -75,20 +75,22 @@ export default function LandingPage() {
             <path fill="url(#bgwave)" d="M0,400L80,373.3C160,347,320,293,480,277.3C640,261,800,283,960,309.3C1120,336,1280,368,1360,384L1440,400L1440,600L1360,600C1280,600,1120,600,960,600C800,600,640,600,480,600C320,600,160,600,80,600L0,600Z" />
           </svg>
         </div>
-        <h1 className="text-4xl md:text-6xl font-extrabold text-cream-100 text-center drop-shadow-lg mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
-          Ask anything. Get answers from every system.
-        </h1>
-        <p className="text-lg md:text-2xl text-cream-200 text-center max-w-2xl mb-8">
-          SOE connects your business tools — like Salesforce, Slack, Notion, and more — into one intelligent assistant.
-        </p>
-        <a href="#waitlist" className="bg-cream-100 text-blue-900 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-cream-200 transition text-lg mb-8">Join the Waitlist</a>
-        {/* Logos/graphic */}
-        <div className="flex flex-wrap gap-6 items-center justify-center mb-8">
-          {SYSTEMS.map((sys) => (
-            <div key={sys.name} className="bg-white/80 rounded-full p-3 shadow flex items-center justify-center">
-              {sys.icon}
-            </div>
-          ))}
+        <div className="relative z-10 flex flex-col items-center w-full">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-cream-100 text-center drop-shadow-lg mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            Ask anything. Get answers from every system.
+          </h1>
+          <p className="text-lg md:text-2xl text-cream-200 text-center max-w-2xl mb-8">
+            SOE connects your business tools — like Salesforce, Slack, Notion, and more — into one intelligent assistant.
+          </p>
+          <a href="#waitlist" className="bg-cream-100 text-blue-900 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-cream-200 transition text-lg mb-8">Join the Waitlist</a>
+          {/* Logos/graphic */}
+          <div className="flex flex-wrap gap-6 items-center justify-center mb-8">
+            {SYSTEMS.map((sys) => (
+              <div key={sys.name} className="bg-white/80 rounded-full p-3 shadow flex items-center justify-center">
+                {sys.icon}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
