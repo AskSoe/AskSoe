@@ -45,21 +45,26 @@ export function Header({ title, onOpenSidebar }: HeaderProps) {
   return (
     <div className="bg-gradient-to-r from-[#002B5B] via-[#05458C] to-[#0A66C2] border-b border-blue-800/20">
       <div className="h-16 relative flex items-center justify-between px-4 md:px-6">
-        {/* Menu Button (Mobile) only */}
+        {/* Menu Button (Mobile) and Logo */}
         <div className="flex items-center space-x-2 z-10">
           {isMobile && onOpenSidebar && (
             <Button variant="ghost" size="icon" onClick={onOpenSidebar} className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
           )}
-          {/* Logo and "Ask SOE" text removed as requested */}
+          {/* SOE Logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            <img 
+              src="/images/soe-logo-new.png" 
+              alt="SOE Logo" 
+              className="h-8 w-auto"
+            />
+          </Link>
         </div>
         
-        {/* Center title with link to homepage */}
+        {/* Center title - removed since logo is now in top left */}
         <div className="absolute inset-x-0 flex justify-center items-center">
-          <Link href="/" className="text-lg font-bold text-[#F4EFE6] hover:opacity-80 transition-opacity">
-            <h1>SOE</h1>
-          </Link>
+          {/* Title removed - logo now in top left */}
         </div>
         
         {/* Action Buttons */}
