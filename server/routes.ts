@@ -20,7 +20,7 @@ import {
   type Document,
   type SubscriptionTierType,
 } from "../shared/schema";
-import { insertSignupSchema } from "./schema";
+
 
 import { handleMessage, tryDirectMockResponse } from "./adapters/llm";
 import { authRouter, requireWriteAccess } from "./auth/routes";
@@ -1086,41 +1086,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Signup endpoint for landing page
-  apiRouter.post("/signups", async (req: Request, res: Response) => {
-    try {
-      // Validate input
-      const parsed = insertSignupSchema.safeParse(req.body);
-      if (!parsed.success) {
-        return res.status(400).json({ error: "Invalid input", details: parsed.error.errors });
-      }
-      const signup = await storage.createSignup(parsed.data);
 
-      // Send email notification
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.SOE_SIGNUP_EMAIL_USER,
-          pass: process.env.SOE_SIGNUP_EMAIL_PASS,
-        },
-      });
-      const mailOptions = {
-        from: process.env.SOE_SIGNUP_EMAIL_USER,
-        to: "dangshaw@gmail.com",
-        subject: `New SOE Waitlist Signup: ${signup.email}`,
-        text: `New signup:\n\nName: ${signup.name}\nJob Title: ${signup.jobTitle || ""}\nEmail: ${signup.email}\nSystems Used: ${signup.systemsUsed || ""}\nPhone: ${signup.phone || ""}`,
-      };
-      try {
-        await transporter.sendMail(mailOptions);
-      } catch (err) {
-        console.error("Signup email failed:", err);
-      }
-      return res.status(201).json({ success: true });
-    } catch (err) {
-      console.error("Signup error:", err);
-      return res.status(500).json({ error: "Failed to process signup" });
-    }
-  });
 
   // Mount the Auth router
   app.use("/auth", authRouter);

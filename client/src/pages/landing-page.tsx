@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FaSalesforce, FaSlack, FaGoogleDrive, FaRegCopyright } from "react-icons/fa";
 import { SiNotion } from "react-icons/si";
 import { FiLinkedin, FiMail } from "react-icons/fi";
@@ -11,44 +11,6 @@ const SYSTEMS = [
 ];
 
 export default function LandingPage() {
-  const [form, setForm] = useState({
-    name: "",
-    jobTitle: "",
-    email: "",
-    systemsUsed: "",
-    phone: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError("");
-    try {
-      const res = await fetch("/api/signups", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (res.ok) {
-        setSuccess(true);
-      } else {
-        const data = await res.json();
-        setError(data.error || "Something went wrong. Please try again.");
-      }
-    } catch (err) {
-      setError("Network error. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 text-cream-100 font-sans">
       {/* Sticky Header */}
@@ -57,7 +19,7 @@ export default function LandingPage() {
           <img src="/images/soe-logo.png" alt="SOE Logo" className="h-8 w-8 mr-2" />
           <span className="text-2xl font-extrabold tracking-tight text-cream-100">SOE</span>
         </div>
-        <a href="#waitlist" className="bg-cream-100 text-blue-900 font-semibold px-5 py-2 rounded-full shadow hover:bg-cream-200 transition">Join Waitlist</a>
+        <a href="/auth" className="bg-cream-100 text-blue-900 font-semibold px-5 py-2 rounded-full shadow hover:bg-cream-200 transition">Login</a>
       </header>
 
       {/* Hero Section */}
@@ -129,66 +91,25 @@ export default function LandingPage() {
       </section>
 
       {/* Waitlist Form */}
-      <section id="waitlist" className="max-w-lg mx-auto py-16 px-4 w-full">
+      <section id="waitlist" className="max-w-2xl mx-auto py-16 px-4 w-full">
         <h2 className="text-2xl md:text-3xl font-bold text-cream-100 text-center mb-6">Join the Waitlist</h2>
-        {success ? (
-          <div className="bg-green-100 text-green-900 rounded-lg p-6 text-center font-semibold shadow">
-            Thanks for joining! We'll be in touch soon.
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="bg-blue-800/80 rounded-xl p-8 shadow flex flex-col gap-5">
-            <input
-              type="text"
-              name="name"
-              required
-              placeholder="Full Name"
-              className="rounded px-4 py-3 bg-cream-100 text-blue-900 placeholder:text-blue-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={form.name}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="jobTitle"
-              placeholder="Job Title"
-              className="rounded px-4 py-3 bg-cream-100 text-blue-900 placeholder:text-blue-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={form.jobTitle}
-              onChange={handleChange}
-            />
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="Work Email"
-              className="rounded px-4 py-3 bg-cream-100 text-blue-900 placeholder:text-blue-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={form.email}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="systemsUsed"
-              placeholder="Which tools do you use most? (e.g. Salesforce, Slack)"
-              className="rounded px-4 py-3 bg-cream-100 text-blue-900 placeholder:text-blue-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={form.systemsUsed}
-              onChange={handleChange}
-            />
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone Number (optional)"
-              className="rounded px-4 py-3 bg-cream-100 text-blue-900 placeholder:text-blue-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
-              value={form.phone}
-              onChange={handleChange}
-            />
-            {error && <div className="text-red-200 text-center font-semibold">{error}</div>}
-            <button
-              type="submit"
-              disabled={submitting}
-              className="bg-cream-100 text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-cream-200 hover:text-blue-900 transition text-lg mt-2 disabled:opacity-60"
-            >
-              {submitting ? "Joining..." : "Join the Waitlist"}
-            </button>
-          </form>
-        )}
+        <p className="text-cream-200 text-center mb-8 max-w-lg mx-auto">
+          Be among the first to experience SOE. Sign up below and we'll notify you when we launch.
+        </p>
+        <div className="bg-blue-800/80 rounded-xl p-8 shadow flex justify-center">
+          <iframe 
+            src="https://docs.google.com/forms/d/e/1FAIpQLSca2a6ILRZmx4XDo6LpKnuIZM0ILbYqftonlHOZ54jsszdtMw/viewform?embedded=true" 
+            width={640}
+            height={1346}
+            frameBorder="0" 
+            marginHeight={0}
+            marginWidth={0}
+            className="max-w-[600px] w-full"
+            title="SOE Waitlist Form"
+          >
+            Loading…
+          </iframe>
+        </div>
       </section>
 
       {/* Footer */}

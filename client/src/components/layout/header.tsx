@@ -54,11 +54,7 @@ export function Header({ title, onOpenSidebar }: HeaderProps) {
           )}
           {/* SOE Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <img 
-              src="/images/soe-logo-new.png" 
-              alt="SOE Logo" 
-              className="h-8 w-auto"
-            />
+            <span className="text-xl font-bold text-white">SOE - System Of Everything</span>
           </Link>
         </div>
         
