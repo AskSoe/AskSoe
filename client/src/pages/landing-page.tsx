@@ -96,19 +96,21 @@ export default function LandingPage() {
         <p className="text-cream-200 text-center mb-8 max-w-lg mx-auto">
           Be among the first to experience SOE. Sign up below and we'll notify you when we launch.
         </p>
-        <div className="bg-blue-800/80 rounded-xl p-8 shadow flex justify-center">
-          <iframe 
-            src="https://docs.google.com/forms/d/e/1FAIpQLSca2a6ILRZmx4XDo6LpKnuIZM0ILbYqftonlHOZ54jsszdtMw/viewform?embedded=true" 
-            width={640}
-            height={1346}
-            frameBorder="0" 
-            marginHeight={0}
-            marginWidth={0}
-            className="max-w-[600px] w-full"
-            title="SOE Waitlist Form"
-          >
-            Loading…
-          </iframe>
+        <div className="flex justify-center p-6">
+          <div className="w-full max-w-3xl rounded-2xl overflow-hidden shadow-xl bg-white dark:bg-[#0B1120] border border-gray-200 dark:border-gray-700">
+            <iframe
+              src="https://docs.google.com/forms/d/e/1FAIpQLSca2a6ILRZmx4XDo6LpKnuIZM0ILbYqftonlHOZ54jsszdtMw/viewform?embedded=true"
+              width="100%"
+              height="800"
+              frameBorder="0"
+              marginHeight={0}
+              marginWidth={0}
+              className="w-full h-[800px]"
+              title="SOE Waitlist Form"
+            >
+              Loading…
+            </iframe>
+          </div>
         </div>
       </section>
 
